@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+renv.lock
+
+
+data/*
+output/liberia/*
+output/simulations/*
+output/figures/*
+output/tables/*
+renv/*
