@@ -89,7 +89,7 @@ row.conditions=((liberia.full$round==5)&(liberia.full$unfound_wave==0))
 liberia.sub=liberia.full[row.conditions,col.vars[!duplicated(col.vars)]]
 
 ## Optional: save liberia.sub
-#save(liberia.sub,file=paste0(basepath,"/data/LiberiaRound5.Rda")) #save smaller data
+save(liberia.sub,file=paste0(basepath,"/data/LiberiaRound5.Rda")) #save smaller data
 
 ## If starting with "LiberiaRound5.Rda" uncomment the following line:
 #load(paste(basepath,"LiberiaRound5.Rda",sep="/"))
