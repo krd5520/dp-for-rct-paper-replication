@@ -3,7 +3,8 @@
 .RData
 .Ruserdata
 renv.lock
-
+.gitignore
+.gitattributes
 
 README_old.md
 data/*
