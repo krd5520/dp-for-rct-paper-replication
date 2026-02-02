@@ -5,9 +5,13 @@
 renv.lock
 
 
+README_old.md
 data/*
+compare_methods/*
 output/liberia/*
 output/simulations/*
 output/figures/*
 output/tables/*
+output/replicate_liberia_analysis/*
+output/*.Rda
 renv/*
