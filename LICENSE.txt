@@ -11,7 +11,7 @@ Public License
 (https://creativecommons.org/licenses/by-nc/4.0/)
 - applies to databases, images, tables, text, and any other objects
 
-COPYRIGHT 2024 IDK????
+COPYRIGHT 2026
 
 =================================================================
 Modified BSD License

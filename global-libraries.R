@@ -43,7 +43,8 @@ pkgTest <- function(x)
 	return("OK")
 }
 
-global.libraries <- c("dplyr", #version 1.1.4
+global.libraries <- c("remotes", #version 2.5.0
+                      "dplyr", #version 1.1.4
                       "devtools", #version 2.4.6
                       "rprojroot", # version 2.1.1
                       "ggplot2", #version 4.0.1
@@ -57,10 +58,10 @@ global.libraries <- c("dplyr", #version 1.1.4
 )
 
 results <- sapply(as.list(global.libraries), pkgTest)
-cbind(libraries,results)
+cbind(global.libraries,results)
 
 # installing an additional package, version used in analysis
-remotes::install_github("krd5520/DPrct/tree/660e72c62ddcca17e6cdda29712bc8b34c745651") #https://github.com/krd5520/DPrct
+remotes::install_github("krd5520/DPrct@2479df9fafbc622b7c270e9910f688df0ca77a6f") #https://github.com/krd5520/DPrct
 
 
 # if (!require("grateful",character.only = TRUE)) {
