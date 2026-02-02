@@ -1,3 +1,0 @@
-.dta filter=lfs diff=lfs merge=lfs -text
-*.dta filter=lfs diff=lfs merge=lfs -text
-STYL_Final.dta filter=lfs diff=lfs merge=lfs -text
