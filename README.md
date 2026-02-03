@@ -33,7 +33,6 @@ Alternatively, you can open `DPrct.Rproj` in Rstudio or similar program and run 
 Here is a brief visual overview of the project repository:
 ```
 dp-for-rct-paper-replication/
-├── compare_methods/
 ├── program/ # Contains main files to run simulations and replicate Blattman et al.
 │   ├── functions/ #directory contains .R files with the functions called by other .R files in programs/ directory
 │   ├── liberia_compare_methods_covariate_sets.R #compares utility of our proposed mechanisms on the Blattman et al. (2025) replication data for three sets of covariates
@@ -47,14 +46,10 @@ dp-for-rct-paper-replication/
 ├── liberia_preprocess_run.sh # Shell script which can clean the Blattman et al. (2025) data, replicate the analysis done by Blattman et al. (2016), and produce the variable tables.
 ├── LICENSE.txt # license for the code and project
 ├── run_simulations.sh # Shell scrpt to run the simulations and make the figures and tables
-│   ├── DataDiag/					# Contains intermediate datasets and diagnostic files
-│   ├── NAICS6_Pyfunctions/			# Contains python helper libraries
-│   ├── GUIcode/			# Work in-progress GUI creation code to walk a user through creating the config file
-│   ├── generateMicrodata.py		# The main script
-│   ├── main.py		              # The main script
-│   └── config.yaml					# Contains configurable parameters and model selections
 └── README.md
 ```
+
+To run the code you will need to add `data/` and `output` directories and a sub-directory `data/liberia_replication_data/`.
 
 
 ## Data Availability and Provenance Statements
@@ -66,9 +61,9 @@ dp-for-rct-paper-replication/
 - [X] I certify that the author(s) of the manuscript have documented permission to redistribute/publish the data contained within this replication package. Appropriate permission are documented in the LICENSE.txt file file.
 
 
-### License for Code
+### License for Data
 
-The code, scripts, and programs are licensed under a Modified BSD License. All other objects are licensed under Creative Commons/CC-BY-NC license. See LICENSE.txt for details.
+Simulation data are licensed under Creative Commons/CC-BY-NC license. See LICENSE.txt for details.
 
 
 ### Summary of Availability
@@ -166,7 +161,7 @@ Approximate time needed to reproduce the analyses on a standard (CURRENT YEAR) d
 - [ ] 10-60 minutes
 - [ ] 1-2 hours
 - [ ] 2-8 hours
-- [ ] 8-24 hours
+- [X] 8-24 hours
 - [ ] 1-3 days
 - [ ] 3-14 days
 - [ ] > 14 days
@@ -178,7 +173,7 @@ Approximate storage space needed:
 - [ ] < 25 MBytes
 - [ ] 25 MB - 250 MB
 - [ ] 250 MB - 2 GB
-- [ ] 2 GB - 25 GB
+- [X] 2 GB - 25 GB
 - [ ] 25 GB - 250 GB
 - [ ] > 250 GB
 
@@ -186,45 +181,39 @@ Approximate storage space needed:
 
 #### Computational Details
 
-The code was last run on a **4-core Intel-based laptop with MacOS version 10.14.4 with 200GB of free space**. 
+The code was last run on a **4-core Intel-based laptop with Microsoft Windows 11 Home version 10.0.26100Build26100 with 84GB of free space**. 
 
-Portions of the code were last run on a **32-core Intel server with 1024 GB of RAM, 12 TB of fast local storage**. Computation took **734 hours**. 
-
-Portions of the code were last run on a **12-node AWS R3 cluster, consuming 20,000 core-hours, with 2TB of attached storage**.  
-
-> INSTRUCTIONS: Identifiying hardware and OS can be obtained through a variety of ways:
-> Some of these details can be found as follows:
->
-> - (Windows) by right-clicking on "This PC" in File Explorer and choosing "Properties"
-> - (Mac) Apple-menu > "About this Mac"
-> - (Linux) see code in [linux-system-info.sh](https://github.com/AEADataEditor/replication-template/blob/master/tools/linux-system-info.sh)`
-
+Detail on computation time can be found in Webb et al. (2026)
 
 ## Description of programs/code
 
-> INSTRUCTIONS: Give a high-level overview of the program files and their purpose. Remove redundant/ obsolete files from the Replication archive.
 
-- Programs in `programs/01_dataprep` will extract and reformat all datasets referenced above. The file `programs/01_dataprep/main.do` will run them all.
-- Programs in `programs/02_analysis` generate all tables and figures in the main body of the article. The program `programs/02_analysis/main.do` will run them all. Each program called from `main.do` identifies the table or figure it creates (e.g., `05_table5.do`).  Output files are called appropriate names (`table5.tex`, `figure12.png`) and should be easy to correlate with the manuscript.
-- Programs in `programs/03_appendix` will generate all tables and figures  in the online appendix. The program `programs/03_appendix/main-appendix.do` will run them all. 
-- Ado files have been stored in `programs/ado` and the `main.do` files set the ADO directories appropriately. 
-- The program `programs/00_setup.do` will populate the `programs/ado` directory with updated ado packages, but for purposes of exact reproduction, this is not needed. The file `programs/00_setup.log` identifies the versions as they were last updated.
-- The program `programs/config.do` contains parameters used by all programs, including a random seed. Note that the random seed is set once for each of the two sequences (in `02_analysis` and `03_appendix`). If running in any order other than the one outlined below, your results may differ.
+- Programs in `programs/liberia_compare_methods_covariate_sets.R` compare the utility of our proposed mechanisms on the Blattman et al. (2025) replication data for three sets of covariates.
+- Programs in `programs/liberia_replicate_original_table2b.R` replicate Blattman et al. (2017) table 2b to verify the analysis process. Script in `liberia_preprocess_run.sh` will run various cleaning code and table generation code on Blattman et al. (2025) data.
+- Programs in `programs/liberia_subset_process_data.R` read in Blattman et al. (2025) data and cleans it. Script in `liberia_preprocess_run.sh` will run various cleaning code and table generation code on Blattman et al. (2025) data.
+- Programs in `programs/liberia_variable_tables.R` produce latex (.tex) tables of the variables used in analysis by Blattman et al. (2016; 2025). Script in `liberia_preprocess_run.sh` will run various cleaning code and table generation code on Blattman et al. (2025) data.
+- Programs in `programs/simulations.R` run simulations comparing utility across privacy budgets and utility across covariate models. Script in `run_simulations.sh` will run all simulation code. 
+- Programs in `programs/simulation_table_and_figures.R` create various plots and tables (as .tex Latex files) from analysis on the simulation data. Script in `run_simulations.sh` will run all simulation code.
 
-### (Optional, but recommended) License for Code
+### License for Code
 
-> INSTRUCTIONS: Most journal repositories provide for a default license, but do not impose a specific license. Authors should actively select a license. This should be provided in a LICENSE.txt file, separately from the README, possibly combined with the license for any data provided. Some code may be subject to inherited license requirements, i.e., the original code author may allow for redistribution only if the code is licensed under specific rules - authors should check with their sources. For instance, some code authors require that their article describing the econometrics of the package be cited. Licensing can be complex. Some non-legal guidance may be found [here](https://social-science-data-editors.github.io/guidance/Licensing_guidance.html).
-
-The code is licensed under a MIT/BSD/GPL [choose one!] license. See LICENSE.txt file for details.
+The code is licensed under a Modified BSD License. See LICENSE.txt file for details.
 
 ## Instructions to Replicators
 
 > INSTRUCTIONS: The first two sections ensure that the data and software necessary to conduct the replication have been collected. This section then describes a human-readable instruction to conduct the replication. This may be simple, or may involve many complicated steps. It should be a simple list, no excess prose. Strict linear sequence. If more than 4-5 manual steps, please wrap a main program/Makefile around them, in logical sequences. Examples follow.
 
-- Edit `programs/config.do` to adjust the default path
-- Run `programs/00_setup.do` once on a new system to set up the working environment. 
-- Download the data files referenced above. Each should be stored in the prepared subdirectories of `data/`, in the format that you download them in. Do not unzip. Scripts are provided in each directory to download the public-use files. Confidential data files requested as part of your FSRDC project will appear in the `/data` folder. No further action is needed on the replicator's part.
-- Run `programs/01_main.do` to run all steps in sequence.
+- Edit variables in `user_defined_variables.R` to define paths and outputs
+- Run `global-libararies.R` once on a new system to set up the working environment. 
+- Download the data files referenced above. Each should be stored in directory `data/liberia_replication_data/`, in the format that you download them in. Extract `STLY_Final.dta` from zipped download and place in `data/liberia_replication_data/`
+- Run `run_simulations.R` or:
+  - Run `programs/simulations.R`
+  - Then run `programs/simulation_table_and_figures.R`
+- Run `liberia_preprocess_run.sh`or:
+  - Run `programs/liberia_replicate_original_table2b.R`
+  - Then run `programs/liberia_subset_process_data.R`
+  - Finally, run `programs/liberia_variable_tables.R`
+- Run `programs/liberia_compare_methods_coveriate_sets.R`
 
 ### Details on various programs
 
@@ -253,8 +242,8 @@ The code is licensed under a MIT/BSD/GPL [choose one!] license. See LICENSE.txt 
 
 The provided code reproduces:
 
-- [ ] All numbers provided in text in the paper
-- [ ] All tables and figures in the paper
+- [X] All numbers provided in text in the paper
+- [X] All tables and figures in the paper
 - [ ] Selected tables and figures in the paper, as explained and justified below.
 
 
@@ -269,16 +258,12 @@ The provided code reproduces:
 
 ## References
 
-> INSTRUCTIONS: As in any scientific manuscript, you should have proper references. For instance, in this sample README, we cited "Ruggles et al, 2019" and "DESE, 2019" in a Data Availability Statement. The reference should thus be listed here, in the style of your journal:
 
-Steven Ruggles, Steven M. Manson, Tracy A. Kugler, David A. Haynes II, David C. Van Riper, and Maryia Bakhtsiyarava. 2018. "IPUMS Terra: Integrated Data on Population and Environment: Version 2 [dataset]." Minneapolis, MN: *Minnesota Population Center, IPUMS*. https://doi.org/10.18128/D090.V2
+Webb, Kaitlyn R., Mukherjee, Soumya, Mustafi, Aratrika,  Slavković, Aleksandra, and Vilhuber, Lars. 2026. "Assessing Utility of Differential Privacy for RCTs." https://arxiv.org/html/2309.14581v2
 
-Department of Elementary and Secondary Education (DESE), 2019. "Student outcomes database [dataset]" *Massachusetts Department of Elementary and Secondary Education (DESE)*. Accessed January 15, 2019.
+Blattman, Christopher, Jamison, Julian C., and Sheridan, Margaret. 2025. "Replication data for: Reducing Crime and Violence: Experimental Evidence from Cognitive Behavioral Therapy in Liberia."" Nashville, TN: American Economic Association [publisher]. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2025-12-21. https://doi.org/10.3886/E113056V2
 
-U.S. Bureau of Economic Analysis (BEA). 2016. “Table 30: "Economic Profile by County, 1969-2016.” (accessed Sept 1, 2017).
-
-Inglehart, R., C. Haerpfer, A. Moreno, C. Welzel, K. Kizilova, J. Diez-Medrano, M. Lagos, P. Norris, E. Ponarin & B. Puranen et al. (eds.). 2014. World Values Survey: Round Six - Country-Pooled Datafile Version: http://www.worldvaluessurvey.org/WVSDocumentationWV6.jsp. Madrid: JD Systems Institute.
-
+Blattman, Christopher, Jamison, Julian C., and Sheridan, Margaret. 2017. "Reducing Crime and Violence: Experimental Evidence from Cognitive Behavioral Therapy in Liberia." American Economic Review 107 (4): 1165–1206.
 ---
 
 ## Acknowledgements
