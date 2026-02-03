@@ -16,18 +16,6 @@ To get started with the repository run the following commands to clone the proje
 git clone https://github.com/krd5520/dp-for-rct-paper-replication.git
 ```
 
-To simply rerun the simulation code, you can run the following in a Linux terminal.
-```bash
-cd dp-for-rct-paper-replication
-
-chmod +x run_simulations.sh
-./run_simulations.sh
-
-```
-
-Alternatively, you can open `DPrct.Rproj` in Rstudio or similar program and run the R files in the following order: 
-  1. global_libraries.R
-  2. 
 
 ## Directories Overview
 Here is a brief visual overview of the project repository:
@@ -49,7 +37,7 @@ dp-for-rct-paper-replication/
 └── README.md
 ```
 
-To run the code you will need to add `data/` and `output` directories and a sub-directory `data/liberia_replication_data/`.
+To run the code you will need to create `data/` and `output/` directories and a sub-directory `data/liberia_replication_data/`.
 
 
 ## Data Availability and Provenance Statements
@@ -89,7 +77,7 @@ We have not redistributed the files, but used them in accordance with its Modifi
 
 Within th zipped download folder there is:
 - `20150503_data/`
-  -`dtafiles/STYL_Final.dta`: Save this file as `STYL_FINAL` in directory `data/liberia_replication_data`. 
+  - `dtafiles/STYL_Final.dta`: Save this file as `STYL_FINAL` in directory `data/liberia_replication_data`. 
   - `dofiles/AER_1.do`: Includes analysis details that are references as comments in `program/liberia_replicate_original_table2b.R` to justify variable selection. The file can be viewed through Stata or Notepad text reader.
   - `dofiles/AER_2.do`: Includes analysis details that are references as comments in `program/liberia_replicate_original_table2b.R` to justify variable selection. The file can be viewed through Stata or Notepad text reader
 - `LICENSE.txt`: Details the packages redistribution restrictions and its Modified BSD License and Creative Commons Attribution 4.0 International Public License.
@@ -97,18 +85,14 @@ Within th zipped download folder there is:
 
 We accessed and downloaded the data January 2026 (corresponding to the updates Blattman et al. (2025) made to the package in December 2025). 
 
-Blattman, Christopher, Jamison, Julian C., and Sheridan, Margaret. Replication data for: Reducing Crime and Violence: Experimental Evidence from Cognitive Behavioral Therapy in Liberia. Nashville, TN: American Economic Association [publisher], 2025. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2025-12-21. https://doi.org/10.3886/E113056V2
-
 Datafile: `data/liberia_replication_data/STYL_Final.dta` (not provided)
 
 
 ## Computational requirements
 
 The required R packages can be installed by running `global-libraries.R`. 
-The CRAN packages required are as following with the version we used for our analysis:
- 
-  
-Additionally, a package from GitHub (repository `krd5520/DPrct`) is used for the proposed mechanisms. It can be installed using the following R code. 
+
+There are several packages that will be installed from the CRAN. Additionally, a package from GitHub (repository `krd5520/DPrct`) is used for the proposed mechanisms. It will be installed using the following R code: 
 
 ``` R
 remotes::install_github("krd5520/DPrct@2479df9fafbc622b7c270e9910f688df0ca77a6f") #https://github.com/krd5520/DPrct
@@ -118,7 +102,6 @@ remotes::install_github("krd5520/DPrct@2479df9fafbc622b7c270e9910f688df0ca77a6f"
 
 ### Software Requirements
 
-> INSTRUCTIONS: List all of the software requirements, up to and including any operating system requirements, for the entire set of code. It is suggested to distribute most dependencies together with the replication package if allowed, in particular if sourced from unversioned code repositories, Github repos, and personal webpages. In all cases, list the version *you* used. All packages should be listed in human-readable form in this README, but should also be included in a setup or install script.
 
 - [X] The replication package contains one or more programs to install all dependencies and set up the necessary directory structure. 
 
@@ -151,7 +134,6 @@ Optional portions of the code use bash scripting, which may require Linux.
 
 ### Memory, Runtime, Storage Requirements
 
-> INSTRUCTIONS: Memory and compute-time requirements may also be relevant or even critical. Some example text follows. It may be useful to break this out by Table/Figure/section of processing. For instance, some estimation routines might run for weeks, but data prep and creating figures might only take a few minutes. You should also describe how much storage is required in addition to the space visible in the typical repository, for instance, because data will be unzipped, data downloaded, or temporary files written.
 
 #### Summary time to reproduce
 
@@ -187,7 +169,6 @@ Detail on computation time can be found in Webb et al. (2026)
 
 ## Description of programs/code
 
-
 - Programs in `programs/liberia_compare_methods_covariate_sets.R` compare the utility of our proposed mechanisms on the Blattman et al. (2025) replication data for three sets of covariates.
 - Programs in `programs/liberia_replicate_original_table2b.R` replicate Blattman et al. (2017) table 2b to verify the analysis process. Script in `liberia_preprocess_run.sh` will run various cleaning code and table generation code on Blattman et al. (2025) data.
 - Programs in `programs/liberia_subset_process_data.R` read in Blattman et al. (2025) data and cleans it. Script in `liberia_preprocess_run.sh` will run various cleaning code and table generation code on Blattman et al. (2025) data.
@@ -201,8 +182,7 @@ The code is licensed under a Modified BSD License. See LICENSE.txt file for deta
 
 ## Instructions to Replicators
 
-> INSTRUCTIONS: The first two sections ensure that the data and software necessary to conduct the replication have been collected. This section then describes a human-readable instruction to conduct the replication. This may be simple, or may involve many complicated steps. It should be a simple list, no excess prose. Strict linear sequence. If more than 4-5 manual steps, please wrap a main program/Makefile around them, in logical sequences. Examples follow.
-
+- Open `DPrct.Rproj` in Rstudio or similar program
 - Edit variables in `user_defined_variables.R` to define paths and outputs
 - Run `global-libararies.R` once on a new system to set up the working environment. 
 - Download the data files referenced above. Each should be stored in directory `data/liberia_replication_data/`, in the format that you download them in. Extract `STLY_Final.dta` from zipped download and place in `data/liberia_replication_data/`
@@ -217,21 +197,27 @@ The code is licensed under a Modified BSD License. See LICENSE.txt file for deta
 
 ### Details on various programs
 
-- `programs/00_setup.do`: will create all output directories, install needed ado packages. 
-   - If wishing to update the ado packages used by this archive, change the parameter `update_ado` to `yes`. However, this is not needed to successfully reproduce the manuscript tables. 
-- `programs/01_dataprep`:  
-   - These programs were last run at various times in 2018. 
-   - Order does not matter, all programs can be run in parallel, if needed. 
-   - A `programs/01_dataprep/main.do` will run them all in sequence, which should take about 2 hours.
-- `programs/02_analysis/main.do`.
-   - If running programs individually, note that ORDER IS IMPORTANT. 
-   - The programs were last run top to bottom on July 4, 2019.
-- `programs/03_appendix/main-appendix.do`. The programs were last run top to bottom on July 4, 2019.
-- Figure 1: The figure can be reproduced using the data provided in the folder “2_data/data_map”, and ArcGIS Desktop (Version 10.7.1) by following these (manual) instructions:
-  - Create a new map document in ArcGIS ArcMap, browse to the folder
-“2_data/data_map” in the “Catalog”, with files  "provinceborders.shp", "lakes.shp", and "cities.shp". 
-  - Drop the files listed above onto the new map, creating three separate layers. Order them with "lakes" in the top layer and "cities" in the bottom layer.
-  - Right-click on the cities file, in properties choose the variable "health"... (more details)
+#### Running Shell Scripts (*Optional*)
+To simply rerun the simulation code, you can run the following in a Linux terminal.
+
+```bash
+cd dp-for-rct-paper-replication
+
+chmod +x run_simulations.sh
+./run_simulations.sh
+
+```
+
+Similarly for cleaning the Blattman et al. (2025) data and generating basic tables.
+
+```bash
+cd dp-for-rct-paper-replication
+
+chmod +x liberia_preprocess_run.sh
+./run_simulations.sh
+
+```
+
 
 ## List of tables and programs
 
@@ -257,7 +243,6 @@ The provided code reproduces:
 | Figure 3          | 02_analysis/fig3.do      |             | figure-robustness.png            | Requires confidential data      |
 
 ## References
-
 
 Webb, Kaitlyn R., Mukherjee, Soumya, Mustafi, Aratrika,  Slavković, Aleksandra, and Vilhuber, Lars. 2026. "Assessing Utility of Differential Privacy for RCTs." https://arxiv.org/html/2309.14581v2
 
