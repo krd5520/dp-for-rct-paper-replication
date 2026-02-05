@@ -50,8 +50,10 @@ sim_compare_methods=function(simdata,
                              only.full.model.based=FALSE,
                              true.coef.vals=NULL,
                              se.func=NULL,
-                             n.obs=NULL,se.normal=F,num.cores=1,
-                             n.std.dev=15,continuous.limits=NULL,standardize.col=NULL,diagnostic.file=NULL){
+                             n.obs=NULL,#se.normal=T,
+                             num.cores=1,
+                             #n.std.dev=15,continuous.limits=NULL,standardize.col=NULL,
+                             diagnostic.file=NULL){
 
   start.time=proc.time() #start time
   if(is.na(rseed)==FALSE){ #set seed if needed
@@ -72,7 +74,7 @@ sim_compare_methods=function(simdata,
   #extract epsilons and deltas
   synthdata.budget.eps=sapply(synthdata.budget,function(x)x[1])
   synthdata.budget.del=sapply(synthdata.budget,function(x)x[2])
-
+  se.normal=TRUE
 
   ### Constructing regression model formulas for each model
   n.regs=length(reg.models)
@@ -180,32 +182,36 @@ sim_compare_methods=function(simdata,
                             ci.alpha=1-ci.confidence,
                             true.vals=true.coef.vals,
                             stderr.func=se.func,
-                            nobs=n.obs,cont.lims=continuous.limits,std.vars=standardize.col,diag.file=diagnostic.file
+                            nobs=n.obs,
+                            #cont.lims=continuous.limits,std.vars=standardize.col,
+                            diag.file=diagnostic.file
   ){
     mod.vars=base::all.vars(as.formula(formulas[idx]))
+
     #first entry of mod.vars is "~"
-    #cont.vars=cont.vars[cont.vars%in%mod.vars[seq(2,length(mod.vars))]]
+    cont.vars=cont.vars[cont.vars%in%mod.vars[seq(2,length(mod.vars))]]
     cont.vars=cont.vars[!(cont.vars%in%c(tr.vars))]
-    std.vars=std.vars[std.vars%in%mod.vars[seq(2,length(mod.vars))]]
-    std.vars=std.vars[!(std.vars%in%c(tr.vars))]
-    if(length(cont.vars)+length(std.vars)==0){ #if no continuous variables, vector of F
+    #std.vars=std.vars[std.vars%in%mod.vars[seq(2,length(mod.vars))]]
+    #std.vars=std.vars[!(std.vars%in%c(tr.vars))]
+    if(length(cont.vars)==0){ #if no continuous variables, vector of F
       cont.vars=rep(F,ncol(data[,colnames(data)%in%mod.vars,drop=F]))
 
     }
     if(is.null(nobs)==FALSE){ #subset data if needed
       data=data[seq(1,nobs[idx]),]
     }
-    if(is.null(cont.lims)==FALSE){
-    if(is.null(names(cont.lims))==FALSE){
-      if(ncol(data[,cont.vars,drop=F])>0){
-        cont.lims=cont.lims[names(cont.lims)%in% colnames(data[,cont.vars,drop=F])]
-      }
-    }else if(ncol(data[,cont.vars,drop=F])>0){
-      cont.lims=cont.lims[[seq(1,ncol(data[,cont.vars,drop=F])>0)]]
-    }
-    }
+    # if(is.null(cont.lims)==FALSE){
+    # if(is.null(names(cont.lims))==FALSE){
+    #   if(ncol(data[,cont.vars,drop=F])>0){
+    #     cont.lims=cont.lims[names(cont.lims)%in% colnames(data[,cont.vars,drop=F])]
+    #   }
+    # }else if(ncol(data[,cont.vars,drop=F])>0){
+    #   cont.lims=cont.lims[[seq(1,ncol(data[,cont.vars,drop=F])>0)]]
+    # }
+    # }
 
     #print(paste0("std.vars in get synthmvhist ",idx," are",paste0(std.vars,collapse=", ")))
+
     mv.out=DPrct::synthdata_perturb_mvhist(data=data[,colnames(data)%in%mod.vars,drop=F],
                                            epsilon=priv.budget.eps[idx],
                                            delta=priv.budget.del[idx],
@@ -218,10 +224,11 @@ sim_compare_methods=function(simdata,
                                            with.treatment=FALSE, #treatment is kept in the mv histogram
                                            within.blocks=FALSE,
                                            blocks=NULL,
-                                           block.sizes=NULL,
-                                           continuous.limits=cont.lims,
-                                           standardize.cont=std.vars, diagnostic.file=diag.file,quietly=T
-                                           )
+                                           block.sizes=NULL)#,
+                                           #continuous.limits=cont.lims,
+                                           #standardize.cont=std.vars,
+                                           #diagnostic.file=diag.file,quietly=T
+                                           #)
 
 
     mv.synth.comp.time=attr(mv.out,"comp.time") #computation time
@@ -323,8 +330,9 @@ sim_compare_methods=function(simdata,
                               true.vals=true.coef.vals,
                               stderr.func=se.func,
                               nobs=n.obs,
-                              cont.lims=continuous.limits,
-                              std.vars=standardize.col, diag.file=diagnostic.file
+                              #cont.lims=continuous.limits,
+                              #std.vars=standardize.col,
+                              diag.file=diagnostic.file
 
   ){
     if(is.null(nobs)==FALSE){
@@ -334,21 +342,21 @@ sim_compare_methods=function(simdata,
     pred.vars=mod.vars[seq(2,length(mod.vars))]
     pred.vars=pred.vars[!(pred.vars%in%c(tr.vars))]
     continuous.vars=continuous.vars[continuous.vars%in%pred.vars]
-    std.vars=std.vars[std.vars%in%pred.vars]
-    if(length(continuous.vars)+length(std.vars)==0){ #if no continuous variables, vector of F
+    #std.vars=std.vars[std.vars%in%pred.vars]
+    if(length(continuous.vars)==0){ #if no continuous variables, vector of F
       continuous.vars=rep(F,ncol(confidential.data[,colnames(confidential.data)%in%mod.vars,drop=F]))
     }
     covar.data=confidential.data[,colnames(confidential.data)%in%pred.vars]
 
-    if(is.null(cont.lims)==FALSE){
-      if(is.null(names(cont.lims))==FALSE){
-        if(ncol(covar.data[,continuous.vars,drop=F])>0){
-          cont.lims=cont.lims[names(cont.lims)%in% colnames(covar.data[,continuous.vars,drop=F])]
-        }
-      }else if(ncol(covar.data[,continuous.vars,drop=F])>0){
-        cont.lims=cont.lims[seq(1,ncol(covar.data[,continuous.vars,drop=F])>0)]
-      }
-    }
+    # if(is.null(cont.lims)==FALSE){
+    #   if(is.null(names(cont.lims))==FALSE){
+    #     if(ncol(covar.data[,continuous.vars,drop=F])>0){
+    #       cont.lims=cont.lims[names(cont.lims)%in% colnames(covar.data[,continuous.vars,drop=F])]
+    #     }
+    #   }else if(ncol(covar.data[,continuous.vars,drop=F])>0){
+    #     cont.lims=cont.lims[seq(1,ncol(covar.data[,continuous.vars,drop=F])>0)]
+    #   }
+    # }
 
     #print(paste0("std.vars in get synthhybrid ",idx," are",paste0(std.vars,collapse=", ")))
     mv.covariates=DPrct::synthdata_perturb_mvhist(data=covar.data,
@@ -365,9 +373,9 @@ sim_compare_methods=function(simdata,
                                                   within.blocks=FALSE,
                                                   blocks=NULL,
                                                   block.sizes=NULL,
-                                                  conditions=c(tr.vars,"control"),
-                                                  continuous.limits=cont.lims,
-                                                  standardize.cont=std.vars,diagnostic.file=diag.file,quietly=T)
+                                                  conditions=c(tr.vars,"control"))#,
+                                                  #continuous.limits=cont.lims,
+                                                  #standardize.cont=std.vars,diagnostic.file=diag.file,quietly=T)
     for(tvar in c(tr.vars,"control")){
       mv.covariates[,tvar]=ifelse(mv.covariates$treatment==tvar,1,0)
     }
@@ -504,9 +512,9 @@ sim_compare_methods=function(simdata,
                                true.vals=true.coef.vals,
                                stderr.func=se.func,
                                nobs=n.obs,
-                               use.se.normal=se.normal,
-                               cont.lims=continuous.limits,
-                               std.vars=standardize.col, diag.file=diagnostic.file
+                               #cont.lims=continuous.limits,
+                               #std.vars=standardize.col,
+                               diag.file=diagnostic.file
 
     ){
       if(is.null(nobs)==FALSE){
@@ -526,22 +534,22 @@ sim_compare_methods=function(simdata,
       pred.vars=mod.vars[seq(2,length(mod.vars))]
       pred.vars=pred.vars[!(pred.vars%in%c(tr.vars))]
       continuous.vars=continuous.vars[continuous.vars%in%pred.vars]
-      std.vars=std.vars[std.vars%in%pred.vars]
-      if(length(continuous.vars)+length(std.vars)==0){ #if no continuous variables, vector of F
+      #std.vars=std.vars[std.vars%in%pred.vars]
+      if(length(continuous.vars)==0){ #if no continuous variables, vector of F
         continuous.vars=rep(F,ncol(confidential.data[,colnames(confidential.data)%in%mod.vars,drop=F]))
       }
       covar.data=confidential.data[,colnames(confidential.data)%in%pred.vars]
 
 
-      if(is.null(cont.lims)==FALSE){
-        if(is.null(names(cont.lims))==FALSE){
-          if(ncol(covar.data[,continuous.vars,drop=F])>0){
-            cont.lims=cont.lims[names(cont.lims)%in% colnames(covar.data[,continuous.vars,drop=F])]
-          }
-        }else if(ncol(covar.data[,continuous.vars,drop=F])>0){
-          cont.lims=cont.lims[seq(1,ncol(covar.data[,continuous.vars,drop=F])>0)]
-        }
-      }
+      # if(is.null(cont.lims)==FALSE){
+      #   if(is.null(names(cont.lims))==FALSE){
+      #     if(ncol(covar.data[,continuous.vars,drop=F])>0){
+      #       cont.lims=cont.lims[names(cont.lims)%in% colnames(covar.data[,continuous.vars,drop=F])]
+      #     }
+      #   }else if(ncol(covar.data[,continuous.vars,drop=F])>0){
+      #     cont.lims=cont.lims[seq(1,ncol(covar.data[,continuous.vars,drop=F])>0)]
+      #   }
+      # }
 
       #print(paste0("std.vars in get synthdpmodel ",idx," are",paste0(std.vars,collapse=", ")))
       mv.covariates=DPrct::synthdata_perturb_mvhist(data=covar.data,
@@ -558,9 +566,9 @@ sim_compare_methods=function(simdata,
                                                     within.blocks=FALSE,
                                                     blocks=NULL,
                                                     block.sizes=NULL,
-                                                    conditions=c(tr.vars,"control"),
-                                                    continuous.limits=cont.lims,
-                                                    standardize.cont=std.vars,diagnostic.file=diag.file,quietly=T)
+                                                    conditions=c(tr.vars,"control"))#,
+                                                    #continuous.limits=cont.lims,
+                                                    #standardize.cont=std.vars,diagnostic.file=diag.file,quietly=T)
       for(tvar in c(tr.vars,"control")){
         mv.covariates[,tvar]=ifelse(mv.covariates$treatment==tvar,1,0)
       }
@@ -599,8 +607,7 @@ sim_compare_methods=function(simdata,
                                    use.san.residerror=TRUE,
                                    return.treatment.pvalue=FALSE,
                                    return.treatment.CI=FALSE,
-                                   treat.ppart.list=NULL,
-                                   se.normal=use.se.normal)
+                                   treat.ppart.list=NULL)
 
       dpmod.out=temp.out[[1]]
       dpmod.out$treatment="control"

@@ -129,15 +129,15 @@ colnames(combos.NCov)=c("NCat","NCont","Model")
 
 
 response="y"
-treat.vars="t1",
+treat.vars="t1"
 
-dpmodel.higher.budget=TRUE,
+dpmodel.higher.budget=TRUE
 
 conf.plot=list("pt.sz1"=1,"ln.sz1"=1.5,"bs.sz1"=12,
                "pt.sz2"=1,"ln.sz2"=1.5,"bs.sz2"=15,
                "ncol1"=3,"ncol2"=2,
                "width1"=4,"height1"=2.5,
-               "width2"=6,"height1"=3.5),
+               "width2"=6,"height1"=3.5)
 
 se.normal=T
 

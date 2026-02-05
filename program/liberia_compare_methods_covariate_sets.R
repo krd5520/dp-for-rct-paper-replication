@@ -1,4 +1,4 @@
-devtools::install_github("krd5520/DPrct")
+#devtools::install_github("krd5520/DPrct")
 
 #renv::install("krd5520/DPrct",verbose=F,lock=T)
 main.start=proc.time()

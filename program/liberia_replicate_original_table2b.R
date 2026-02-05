@@ -31,7 +31,7 @@ plot.params=list("pt.sz"=4,
 ### Association [publisher], 2017. Ann Arbor, MI: Inter-university Consortium for
 ### Political and Social Research [distributor], 2019-10-12. https://doi.org/10.3886/E113056V1
 
-#base variable in AER.do
+#'base' variable in AER_1.do
 baseline.full=c('age_b', 'livepartner_b', 'mpartners_b', 'hhunder15_b', 'famseeoften_b',
                 'muslim_b', 'school_b', 'schoolbasin_b', 'literacy_b', 'mathscore_b', 'health_resc_b',
                 'disabled_b', 'depression_b', 'distress_b', 'rel_commanders_b', 'faction_b', 'warexper_b',
@@ -46,11 +46,11 @@ baseline.full=c('age_b', 'livepartner_b', 'mpartners_b', 'hhunder15_b', 'famseeo
                 'timedecl_b', 'riskdecl_b', 'cognitive_score_b', 'ef_score_b')
 
 
-#dvs_t2 in AER.do
-response.stem=c('fam_asb_lt','drugssellever','stealnb','disputes_all_z','carryweapon',
+#'dvs_t2' in AER_1.do
+response.stem=c('fam_asb','drugssellever','stealnb','disputes_all_z','carryweapon',
                 'arrested','asbhostilstd','domabuse_z')
 
-#strata in AER.do
+#'strata' in AER_1.do
 block.vars=c("tp_strata_alt","cg_strata") #block variables
 
 #focusing on round==5 (term=lt in AER.do file)
@@ -100,20 +100,19 @@ covariate.formula=paste(c(baseline.full,block.vars),collapse="+")
 #  apply(liberia.sub[,colnames(liberia.sub)],2,
 #        function(x)as.numeric(as.character(x)))
 
-#line 33 of AER.do sets block variables to factors
+#AER_1.do sets block variables to factors
 liberia.sub[,block.vars]=
   apply(liberia.sub[,block.vars],2,
         function(x)as.factor(as.character(x)))
 
-reg.formula=paste(response.vars.allltav,
+reg.formula=paste(response.vars,
                   paste(c(treat.vars,baseline.full,block.vars),collapse="+"),sep="~")
 
-#on line 334 of AER.do file the ",r" indicates that robust (sandwich estimator) of variance
+#in AER_1.do file the ",r" indicates that robust (sandwich estimator) of variance
 sterr.func=function(mod){
   sqrt(diag(sandwich::vcovHC(mod)))
 }
-# table(liberia.sub$tp_strata_alt)
-# table(liberia.sub$cg_strata)
+
 try(DPrct::ITTtable(data=liberia.sub,
          families=rep("gaussian",length(reg.formula)),
          reg.models=reg.formula,
@@ -122,6 +121,7 @@ try(DPrct::ITTtable(data=liberia.sub,
          stderr.func=sterr.func,
          add.pval.stars = FALSE,
          mult.test.correct=NULL))
+
 #The robust sandwich method does not work. However there are other types of it.
 
 sterr.type="HC0"
@@ -141,7 +141,7 @@ for(sterr.type in type.list){
                  mult.test.correct=NULL)
     if((sum(is.nan(tab$StdErr_cashassonly))==0)&&
       (sum(abs(round(tab$StdErr_cashassonly,3)-
-             c(0.097,0.030,0.388,0.090,0.035,0.025,0.107,0.113)))<10^(-6))){
+             c(0.097,0.030,0.388,0.090,0.035,0.025,0.107,0.113)))<10^(-6))){ #cashonly standard errors in published Table2b from BJS(2017).
       print(sterr.type)
         tempdf=tab[,!grepl("Pvalue",colnames(tab))]
         print(tempdf[,colnames(tempdf)!="nObs"])

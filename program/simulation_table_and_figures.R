@@ -1,12 +1,12 @@
-devtools::install_github("krd5520/DPrct")
+
 library(dplyr) #to use %>% command
 ####### Testing the multivariate histogram method on the Liberia Data
 basepath = rprojroot::find_rstudio_root_file()
 main.start=proc.time()
 
 outputpath=paste0(basepath,"/output")
-file.suffix="0320_loweffect"
-truetreat=-0.25
+file.suffix=simulations.file.suffix
+#truetreat=-0.25
 #file.suffix="0320_5effect"
 truetreat=5
 sim2.conf.suffix="conf_sim_models"
@@ -22,29 +22,34 @@ DPMbtab.name=c("DP-Mb(1)"="\\dpmb{1}",
 longDPMb="GenModel"
 
 plot.file.identifier=c("sim1_treff_BudgetX_AllMethods_KeepOutliers",
+                       #"sim1_treff_BudgetX_AllMethods_RemoveOutliers",
                        "sim2_CIoverlap_ModelsX_AllMethods_KeepOutliers",
                        "sim2_treff_ModelX_NotDPMb_KeepOutliers",
                        "sim2_treff_ModelX_OnlyDPMb_RemoveOutliers",
                        "sim2_treff_ModelX_OnlyDPMb_KeepOutliers",
                        "sim2_CIoverlap_MethodsX",
-                       "sim2_treff_MethodsX_KeepOutliers")
+                       "sim2_treff_MethodsX_KeepOutliers",
+                       "sim2_treff_MethodsX_RemoveOutliers")
 table.digits=2
 sim1.base.size=13
 sim2.base.size=13
 plot.sizes=list("row1col3"=c(2000,1000), #sim1 plot
+                #"row1col3"=c(2000,1000),
                 "row1col2"=c(1500,1000), #ModelX OnlyDPmb and  ModelX NoDPmb
                 "row2col2"=c(2000,2000), #ModelX All Methods
                 "row3col3"=c(1500,1500),
+                "row1col1"=c(1000,1000),
                 "row1col1"=c(1000,1000))
-plot.dims=c("row1col3","row2col2","row1col2","row1col2","row1col2","row3col3","row3col3")
+plot.dims=c("row1col3",#"row1col3",
+            "row2col2","row1col2","row1col2","row1col2","row3col3","row3col3","row3col3")
 
 
 
 plot.file.names=paste0(outputpath,"/figures/simplots_",file.suffix,"/",plot.file.identifier,".png")
-plot.file.names.nonoise=paste0(outputpath,"/figures/simplots_",file.suffix,"/nonoise",plot.file.identifier,".png")
+#plot.file.names.nonoise=paste0(outputpath,"/figures/simplots_",file.suffix,"/nonoise",plot.file.identifier,".png")
 
 plot.fname.pref=paste0(outputpath,"/figures/simplots_",file.suffix,"/")
-plot.file.names.nonoise=paste0(outputpath,"/figures/simplots_",file.suffix,"/nonoise",plot.file.identifier,".png")
+#plot.file.names.nonoise=paste0(outputpath,"/figures/simplots_",file.suffix,"/nonoise",plot.file.identifier,".png")
 
 source(paste0(basepath,"/program/functions/directory_setup.R"))
 dir.set=directory_setup(basepath,outputpath,list("tables","figures","simulations",paste0("figures/simplots_",file.suffix)))
@@ -160,10 +165,13 @@ sim1plot=ggplot2::ggplot(data=plotdata.itt,
   ggplot2::facet_wrap(~plotdata.itt$Method)
 sim1plot
 #if(save.plot.png==T){
-ggplot2::ggsave(filename=paste0(plot.fname.pref,"sim1_treff_BudgetX_NotMVHist_KeepOutliers.png"),
+ggplot2::ggsave(filename=paste0(plot.fname.pref,"sim1_treff_BudgetX_KeepOutliers.png"),
                 width=((plot.sizes[["row1col3"]])[1]),
                 height=((plot.sizes[["row1col3"]])[2]),
                 units="px",bg="white")
+
+
+
 
 for(m in unique(plotdata.itt$Method)){
   tempdf=plotdata.itt[plotdata.itt$Method==m,]
@@ -191,6 +199,10 @@ for(m in unique(plotdata.itt$Method)){
 
 
 }
+
+
+
+
 ylims.plt1=get_ylims(plotdata.itt$ITT,plotdata.itt$Method)
 sim1plot.noout=ggplot2::ggplot(data=plotdata.itt,
                          ggplot2::aes(y=ITT,x=Epsilon,group=Epsilon))+
@@ -784,212 +796,212 @@ save(sim2.plot.list,
 ############### Sim 2 No Noise ##########
 #################################
 #load simulation data from models
-load(paste0(basepath,"/output/simulations/simulations_nonoise",file.suffix,".Rda"))
+#load(paste0(basepath,"/output/simulations/simulations_nonoise",file.suffix,".Rda"))
 
-t1=sim2_nonoise[[1]]
-t3=sim2_nonoise[[3]]
-summary.tab.catcont.nn=sim2_nonoise[[3]]
+#t1=sim2_nonoise[[1]]
+#t3=sim2_nonoise[[3]]
+#summary.tab.catcont.nn=sim2_nonoise[[3]]
 
-######## Table #########
-sim1.summary.cond1=summary.tab.catcont.nn$Treatment!="control"
-# sim1.summary.cond2=((summary.tab.catcont$Method!="Confidential")|
-#                       ((summary.tab.catcont$Method=="Confidential")&grepl("Higher",summary.tab.catcont$Model)))
-col.order1=c("Model","NCont","NCat","Method","Avg.ITT","Avg.CI.overlap","Avg.Abs.Err","Max.StdErr","ModelLab")
-summary.treat.catcont.nn=summary.tab.catcont.nn[sim1.summary.cond1,col.order1]
-
-for(md.nm in combos.NCov$Name){
-  summary.treat.catcont.nn$NCat[summary.treat.catcont.nn$Model==md.nm]=combos.NCov$NCat[combos.NCov$Name==md.nm]
-  summary.treat.catcont.nn$NCont[summary.treat.catcont.nn$Model==md.nm]=combos.NCov$NCont[combos.NCov$Name==md.nm]
-  summary.treat.catcont.nn$ModelLab[summary.treat.catcont.nn$Model==md.nm]=combos.NCov$Name[combos.NCov$Name==md.nm]
-}
-summary.treat.catcont.nn$Algorithm=as.character(summary.treat.catcont.nn$Method)
-#higher.indic=(grepl("HigherBudget",summary.treat.catcont$Model)&(summary.treat.catcont$Method=="DP Model-based"))
-summary.treat.catcont.nn$Algorithm[summary.treat.catcont.nn$Method=="DP Model-based"]="DP-Mb"
-#summary.treat.catcont$Algorithm[higher.indic]="DP-Mb (2)"
-#paste("Higher Budget",summary.treat.catcont$Algorithm[higher.indic])
-#summary.treat.catcont$ModelLab=factor(summary.treat.catcont$ModelLab,levels=mod.order)
-table(summary.treat.catcont.nn$Algorithm)
-summary.treat.catcont.nn$Algorithm=factor(summary.treat.catcont.nn$Algorithm,levels=c("Confidential","MV Histogram","Hybrid","DP-Mb"),
-                                       labels=c("Confidential","MV Histogram","Hybrid","\\longdpmb"))
-
-summary.tab.catcont.table=summary.treat.catcont.nn%>%arrange(Algorithm)%>%arrange(ModelLab)
-col.order=c("ModelLab","NCont","NCat","Algorithm","Avg.ITT","Avg.CI.overlap","Avg.Abs.Err","Max.StdErr")
-sim2table=knitr::kable(summary.tab.catcont.table[!is.na(summary.tab.catcont.table$Algorithm),col.order],
-                       col.names = c("Model","Cont.","Cat.","Algorithm","Mean $\\treff$ Estimate","Mean $\\cioverlap$",
-                                     "Mean Abs. Diff. ($\\treff=5$)",
-                                     "Max Std. Err."),
-                       digits=table.digits,format="latex",booktabs=T,
-                       linesep=c("","","","\\addlinespace"),escape=F)
-sim2table
-writeLines(sim2table,paste0(basepath,"/output/tables/sim2_models_nonoise_",file.suffix,".tex"))
-
-############ PLOT ##################
-
-# sim2.select.cond1=((ITT2$Method!="Confidential")|
-#                      ((ITT2$Method=="Confidential")&(!grepl("Higher",ITT2$Model))))
-ITT2.dedup=sim2_nonoise[[1]]#ITT2#[sim2.select.cond1,]
-ITT2.dedup$MethodLab=ITT2.dedup$Method
-#ITT2.dedup$MethodLab[grepl("Higher",ITT2.dedup$Model)]="DP-Mb (2)"
-#ITT2.dedup$MethodLab[(!grepl("Higher",ITT2.dedup$Model))&(ITT2.dedup$Method=="DP Model-based")]="DP-Mb"
-ITT2.dedup$MethodLab=factor(ITT2.dedup$MethodLab,
-                            levels=c("Confidential","MV Histogram","Hybrid",
-                                     "DP Model-based"),
-                            labels=c("Confidential","MV Histogram","Hybrid",longDPMb))
-#ITT2.dedup$ModelLab=gsub("HigherBudget_","",ITT2.dedup$Model)
-ITT2.dedup$ModelLab=factor(ITT2.dedup$Model,levels=c(paste("Model",seq(1,9)),"Unbounded","Finite Set"))
-
-sim2.plotdata=ITT2.dedup%>%
-  filter(Treatment!="control")#%>%filter(Method!="Confidential")
-not.conf=(sim2.plotdata$Method!="Confidential")
-sim2.plotdata$Method=as.character(sim2.plotdata$Method)
-for(md.nm in combos.NCov$Name){
-  sim2.plotdata$NCat[sim2.plotdata$Model==md.nm]=combos.NCov$NCat[combos.NCov$Name==md.nm]
-  sim2.plotdata$NCont[sim2.plotdata$Model==md.nm]=combos.NCov$NCont[combos.NCov$Name==md.nm]
-}
-
-sim2.plotlist=NULL
+# ######## Table #########
+# sim1.summary.cond1=summary.tab.catcont.nn$Treatment!="control"
+# # sim1.summary.cond2=((summary.tab.catcont$Method!="Confidential")|
+# #                       ((summary.tab.catcont$Method=="Confidential")&grepl("Higher",summary.tab.catcont$Model)))
+# col.order1=c("Model","NCont","NCat","Method","Avg.ITT","Avg.CI.overlap","Avg.Abs.Err","Max.StdErr","ModelLab")
+# summary.treat.catcont.nn=summary.tab.catcont.nn[sim1.summary.cond1,col.order1]
+#
+# for(md.nm in combos.NCov$Name){
+#   summary.treat.catcont.nn$NCat[summary.treat.catcont.nn$Model==md.nm]=combos.NCov$NCat[combos.NCov$Name==md.nm]
+#   summary.treat.catcont.nn$NCont[summary.treat.catcont.nn$Model==md.nm]=combos.NCov$NCont[combos.NCov$Name==md.nm]
+#   summary.treat.catcont.nn$ModelLab[summary.treat.catcont.nn$Model==md.nm]=combos.NCov$Name[combos.NCov$Name==md.nm]
+# }
+# summary.treat.catcont.nn$Algorithm=as.character(summary.treat.catcont.nn$Method)
+# #higher.indic=(grepl("HigherBudget",summary.treat.catcont$Model)&(summary.treat.catcont$Method=="DP Model-based"))
+# summary.treat.catcont.nn$Algorithm[summary.treat.catcont.nn$Method=="DP Model-based"]="DP-Mb"
+# #summary.treat.catcont$Algorithm[higher.indic]="DP-Mb (2)"
+# #paste("Higher Budget",summary.treat.catcont$Algorithm[higher.indic])
+# #summary.treat.catcont$ModelLab=factor(summary.treat.catcont$ModelLab,levels=mod.order)
+# table(summary.treat.catcont.nn$Algorithm)
+# summary.treat.catcont.nn$Algorithm=factor(summary.treat.catcont.nn$Algorithm,levels=c("Confidential","MV Histogram","Hybrid","DP-Mb"),
+#                                        labels=c("Confidential","MV Histogram","Hybrid","\\longdpmb"))
+#
+# summary.tab.catcont.table=summary.treat.catcont.nn%>%arrange(Algorithm)%>%arrange(ModelLab)
+# col.order=c("ModelLab","NCont","NCat","Algorithm","Avg.ITT","Avg.CI.overlap","Avg.Abs.Err","Max.StdErr")
+# sim2table=knitr::kable(summary.tab.catcont.table[!is.na(summary.tab.catcont.table$Algorithm),col.order],
+#                        col.names = c("Model","Cont.","Cat.","Algorithm","Mean $\\treff$ Estimate","Mean $\\cioverlap$",
+#                                      "Mean Abs. Diff. ($\\treff=5$)",
+#                                      "Max Std. Err."),
+#                        digits=table.digits,format="latex",booktabs=T,
+#                        linesep=c("","","","\\addlinespace"),escape=F)
+# sim2table
+# writeLines(sim2table,paste0(basepath,"/output/tables/sim2_models_nonoise_",file.suffix,".tex"))
+#
+# ############ PLOT ##################
+#
+# # sim2.select.cond1=((ITT2$Method!="Confidential")|
+# #                      ((ITT2$Method=="Confidential")&(!grepl("Higher",ITT2$Model))))
+# ITT2.dedup=sim2_nonoise[[1]]#ITT2#[sim2.select.cond1,]
+# ITT2.dedup$MethodLab=ITT2.dedup$Method
+# #ITT2.dedup$MethodLab[grepl("Higher",ITT2.dedup$Model)]="DP-Mb (2)"
+# #ITT2.dedup$MethodLab[(!grepl("Higher",ITT2.dedup$Model))&(ITT2.dedup$Method=="DP Model-based")]="DP-Mb"
+# ITT2.dedup$MethodLab=factor(ITT2.dedup$MethodLab,
+#                             levels=c("Confidential","MV Histogram","Hybrid",
+#                                      "DP Model-based"),
+#                             labels=c("Confidential","MV Histogram","Hybrid",longDPMb))
+# #ITT2.dedup$ModelLab=gsub("HigherBudget_","",ITT2.dedup$Model)
+# ITT2.dedup$ModelLab=factor(ITT2.dedup$Model,levels=c(paste("Model",seq(1,9)),"Unbounded","Finite Set"))
+#
+# sim2.plotdata=ITT2.dedup%>%
+#   filter(Treatment!="control")#%>%filter(Method!="Confidential")
+# not.conf=(sim2.plotdata$Method!="Confidential")
+# sim2.plotdata$Method=as.character(sim2.plotdata$Method)
+# for(md.nm in combos.NCov$Name){
+#   sim2.plotdata$NCat[sim2.plotdata$Model==md.nm]=combos.NCov$NCat[combos.NCov$Name==md.nm]
+#   sim2.plotdata$NCont[sim2.plotdata$Model==md.nm]=combos.NCov$NCont[combos.NCov$Name==md.nm]
+# }
+#
+# sim2.plotlist=NULL
 ######## Plot 1
-
-cioverlap.by.ncovXmethod.plot=
-  ggplot2::ggplot(data=sim2.plotdata[not.conf,],
-                  ggplot2::aes(y=CI.overlap,
-                               group=ModelLab,
-                               x=ModelLab,
-                               color=ModelLab))+
-  ggplot2::geom_boxplot()+
-  ggplot2::labs(x="Model",y="CI Overlap")+
-  ggplot2::theme_minimal(base_size=sim2.base.size)+
-  ggplot2::theme(axis.text.x=ggplot2::element_text(angle=35,vjust=1.05,hjust=0.95),
-                 legend.position = "none")+
-  grafify::scale_color_grafify("kelly")+
-  ggplot2::facet_wrap(~MethodLab)
-cioverlap.by.ncovXmethod.plot
-#if(save.plot.png==T){
-ggplot2::ggsave(filename=paste0(plot.fname.pref,"nonoise_sim2_CIoverlap_ModelX_KeepOutliers.png"),
-                 width=((plot.sizes[["row1col3"]])[1]),
-                 height=((plot.sizes[["row1col3"]])[2]),
-                 units="px",bg="white")
-#}
-plot.idx=plot.idx+1
-sim2.plot.list=c(sim2.plotlist,list("NoNoise CI Overlap By Method And Model"=cioverlap.by.ncovXmethod.plot))
+#
+# cioverlap.by.ncovXmethod.plot=
+#   ggplot2::ggplot(data=sim2.plotdata[not.conf,],
+#                   ggplot2::aes(y=CI.overlap,
+#                                group=ModelLab,
+#                                x=ModelLab,
+#                                color=ModelLab))+
+#   ggplot2::geom_boxplot()+
+#   ggplot2::labs(x="Model",y="CI Overlap")+
+#   ggplot2::theme_minimal(base_size=sim2.base.size)+
+#   ggplot2::theme(axis.text.x=ggplot2::element_text(angle=35,vjust=1.05,hjust=0.95),
+#                  legend.position = "none")+
+#   grafify::scale_color_grafify("kelly")+
+#   ggplot2::facet_wrap(~MethodLab)
+# cioverlap.by.ncovXmethod.plot
+# #if(save.plot.png==T){
+# ggplot2::ggsave(filename=paste0(plot.fname.pref,"nonoise_sim2_CIoverlap_ModelX_KeepOutliers.png"),
+#                  width=((plot.sizes[["row1col3"]])[1]),
+#                  height=((plot.sizes[["row1col3"]])[2]),
+#                  units="px",bg="white")
+# #}
+# plot.idx=plot.idx+1
+# sim2.plot.list=c(sim2.plotlist,list("NoNoise CI Overlap By Method And Model"=cioverlap.by.ncovXmethod.plot))
 
 ##### Plot 2 (and variations) ###
 
-only.conf=sim2.plotdata[sim2.plotdata$Method=="Confidential",]
-conf.rw=nrow(only.conf)
-
-ylims.v.nonoise=get_ylims(sim2.plotdata$ITT,sim2.plotdata$MethodLab)
-treff.bymod.wout=sim2.itt.by.method.model(sim2.plotdata[not.conf,],only.conf.data=only.conf,freescale = T,outlier.shp=20)
-treff.bymod.wout
-
-ggplot2::ggsave(filename=paste0(plot.fname.pref,"nonoise_sim2_treff_ModelX_AllMethods_KeepOutliers.png"),
-                width=((plot.sizes[["row1col3"]])[1]),
-                height=((plot.sizes[["row1col3"]])[2]),
-                units="px",bg="white")
-
-
-
-
-sim2.plot.list=c(sim2.plot.list,
-                 list("NoNoise TreatEffect Boxplot WITH Outliers"=treff.bymod.wout))
-
-
-##### Plot 3
-
-sim2.plotdata.noadd=sim2.plotdata[grepl("Model",sim2.plotdata$Model),]
-not.conf.noadd=(sim2.plotdata.noadd$Method!="Confidential")
-sim2.plotdata.noadd.noconf=sim2.plotdata.noadd[not.conf.noadd,]
-sim2.plotdata.noadd.noconf$NCatlab=factor(paste("Binary",sim2.plotdata.noadd.noconf$NCat),levels=paste("Binary",c(4,10,20)))
-sim2.plotdata.noadd.noconf$NContlab=factor(paste("Continuous",sim2.plotdata.noadd.noconf$NCont),levels=paste("Continuous",c(2,5,10)))
-sim2.plotdata.noadd.noconf$MethodLab=factor(sim2.plotdata.noadd.noconf$MethodLab,levels=levels(sim2.plotdata.noadd$MethodLab)[2:5])
-
-cioverlap.by.ncatXncontXmethod.plot=
-  ggplot2::ggplot(data=sim2.plotdata.noadd.noconf,
-                  ggplot2::aes(y=CI.overlap,group=MethodLab,x=MethodLab,color=MethodLab))+
-  ggplot2::geom_boxplot()+
-  ggplot2::labs(x="Algorithm",y="CI Overlap",color="Algorithm")+
-  ggplot2::theme_bw(base_size=sim2.base.size)+
-  ggplot2::theme(axis.text.x=ggplot2::element_text(angle=35,vjust=1.05,hjust=0.95),
-                 legend.position = "none")+
-  #ggplot2::scale_x_discrete(labels=c("MV Histogram","Hybrid","DP Mo"))+
-  ggplot2::scale_color_brewer(palette="Dark2")+
-  ggplot2::facet_grid(NCatlab~NContlab)
-cioverlap.by.ncatXncontXmethod.plot
-#if(save.plot.png==T){
-ggplot2::ggsave(filename=paste0(plot.fname.pref,"nonoise_sim2_CIOverlap_MethodsX_GridMod.png"),
-                width=((plot.sizes[["row3col3"]])[1]),
-                height=((plot.sizes[["row3col3"]])[2]),
-                units="px",bg="white")
-#}
-
-treff.by.ncatXncontXmethod.plot=
-  ggplot2::ggplot(data=sim2.plotdata.noadd.noconf,
-                  ggplot2::aes(y=ITT,group=MethodLab,x=MethodLab,color=MethodLab))+
-  ggplot2::geom_boxplot(outlier.shape = NA)+
-  ggplot2::labs(x="Algorithm",y="Treatment Effect",color="Algorithm")+
-  ggplot2::theme_bw(base_size=sim2.base.size)+
-  ggplot2::theme(axis.text.x=ggplot2::element_text(angle=35,vjust=1.05,hjust=0.95),
-                 legend.position = "none")+
-  #ggplot2::scale_y_continuous(limits = ylim.v.nonoise)+
-  #ggplot2::scale_x_discrete(labels=c("MV Histogram","Hybrid","DP Mo"))+
-  ggplot2::scale_color_brewer(palette="Dark2")+
-  ggplot2::facet_grid(NCatlab~NContlab)
-treff.by.ncatXncontXmethod.plot
-
-#if(save.plot.png==T){
-ggplot2::ggsave(filename=paste0(plot.fname.pref,"nonoise_sim2_treff_MethodsX_GridMod.png"),
-                width=((plot.sizes[["row3col3"]])[1]),
-                height=((plot.sizes[["row3col3"]])[2]),
-                units="px",bg="white")
-#}
-plot.idx=plot.idx+1
-sim2.plot.list=c(sim2.plot.list,list("NoNoise CI Overlap by Number of Variables and Methods"=cioverlap.by.ncatXncontXmethod.plot,
-                                     "NoNoise TreatEffect by Number of Variables and Methods Without Outliers"=treff.by.ncatXncontXmethod.plot))
-
-save(sim2.plot.list,
-     sim2.plotdata.noadd.noconf,sim2.plotdata,only.conf,
-     not.conf,min.y,max.y,
-     sim2table,sim2.base.size,
-     file=paste0(outputpath,"/simulations/sim2_tables_and_figures_nonoise",file.suffix,".Rda"))
-
-
-#### On this version, something went wrong with the diagonostic plot save, so I re-generated them
-source(paste0(basepath,"/program/functions/reg_assumptions_function.R"))
-load(paste0(basepath,"/output/simulations/checkpoint_",sim2.conf.suffix,"_",file.suffix,".Rda"))
-conf.plot=list("pt.sz1"=4,"ln.sz1"=2.5,"bs.sz1"=33,
-               "pt.sz2"=2,"ln.sz2"=1,"bs.sz2"=14,
-               "ncol1"=3,"ncol2"=2,
-               "width1"=3500,"height1"=2000,
-               "width2"=1000,"height2"=300)
-mod.names=names(reg.formulas.sim2)
-add.plots=lapply(seq(1+length(reg.formulas.sim2)-2,length(reg.formulas.sim2)),
-                 function(idx)reg_assumptions(reg.formulas.sim2[idx],
-                                              data=sim.dfs,
-                                              response.var="y",
-                                              pt.sz=conf.plot$pt.sz2,
-                                              ln.sz=conf.plot$ln.sz2,
-                                              bs.sz=conf.plot$bs.sz2,
-                                              mod.name=mod.names[idx]))
-save.plot.name.xtra=paste0(basepath,"/output/figures/diagnostic_",sim2.conf.suffix,"_",file.suffix,"_xtra.png")
-png(filename=save.plot.name.xtra
-    ,width=conf.plot$width2,height=conf.plot$height2)
-print(cowplot::plot_grid(plotlist=add.plots,ncol=conf.plot$ncol2))
-dev.off()
-
-conf.plots=lapply(seq(1,length(reg.formulas.sim2)-2),
-                 function(idx)reg_assumptions(reg.formulas.sim2[idx],
-                                              data=sim.dfs,
-                                              response.var="y",
-                                              pt.sz=conf.plot$pt.sz1,
-                                              ln.sz=conf.plot$ln.sz1,
-                                              bs.sz=conf.plot$bs.sz1,
-                                              mod.name=mod.names[idx]))
-
-save.plot.name=paste0(basepath,"/output/figures/diagnostic_",sim2.conf.suffix,"_",file.suffix,".png")
-png(filename=save.plot.name
-    ,width=conf.plot$width1,height=conf.plot$height1)
-print(cowplot::plot_grid(plotlist=conf.plots,ncol=conf.plot$ncol1))
-dev.off()
+# only.conf=sim2.plotdata[sim2.plotdata$Method=="Confidential",]
+# conf.rw=nrow(only.conf)
+#
+# ylims.v.nonoise=get_ylims(sim2.plotdata$ITT,sim2.plotdata$MethodLab)
+# treff.bymod.wout=sim2.itt.by.method.model(sim2.plotdata[not.conf,],only.conf.data=only.conf,freescale = T,outlier.shp=20)
+# treff.bymod.wout
+#
+# ggplot2::ggsave(filename=paste0(plot.fname.pref,"nonoise_sim2_treff_ModelX_AllMethods_KeepOutliers.png"),
+#                 width=((plot.sizes[["row1col3"]])[1]),
+#                 height=((plot.sizes[["row1col3"]])[2]),
+#                 units="px",bg="white")
 #
 #
-head(sim1)
+#
+#
+# sim2.plot.list=c(sim2.plot.list,
+#                  list("NoNoise TreatEffect Boxplot WITH Outliers"=treff.bymod.wout))
+#
+#
+# ##### Plot 3
+#
+# sim2.plotdata.noadd=sim2.plotdata[grepl("Model",sim2.plotdata$Model),]
+# not.conf.noadd=(sim2.plotdata.noadd$Method!="Confidential")
+# sim2.plotdata.noadd.noconf=sim2.plotdata.noadd[not.conf.noadd,]
+# sim2.plotdata.noadd.noconf$NCatlab=factor(paste("Binary",sim2.plotdata.noadd.noconf$NCat),levels=paste("Binary",c(4,10,20)))
+# sim2.plotdata.noadd.noconf$NContlab=factor(paste("Continuous",sim2.plotdata.noadd.noconf$NCont),levels=paste("Continuous",c(2,5,10)))
+# sim2.plotdata.noadd.noconf$MethodLab=factor(sim2.plotdata.noadd.noconf$MethodLab,levels=levels(sim2.plotdata.noadd$MethodLab)[2:5])
+#
+# cioverlap.by.ncatXncontXmethod.plot=
+#   ggplot2::ggplot(data=sim2.plotdata.noadd.noconf,
+#                   ggplot2::aes(y=CI.overlap,group=MethodLab,x=MethodLab,color=MethodLab))+
+#   ggplot2::geom_boxplot()+
+#   ggplot2::labs(x="Algorithm",y="CI Overlap",color="Algorithm")+
+#   ggplot2::theme_bw(base_size=sim2.base.size)+
+#   ggplot2::theme(axis.text.x=ggplot2::element_text(angle=35,vjust=1.05,hjust=0.95),
+#                  legend.position = "none")+
+#   #ggplot2::scale_x_discrete(labels=c("MV Histogram","Hybrid","DP Mo"))+
+#   ggplot2::scale_color_brewer(palette="Dark2")+
+#   ggplot2::facet_grid(NCatlab~NContlab)
+# cioverlap.by.ncatXncontXmethod.plot
+# #if(save.plot.png==T){
+# ggplot2::ggsave(filename=paste0(plot.fname.pref,"nonoise_sim2_CIOverlap_MethodsX_GridMod.png"),
+#                 width=((plot.sizes[["row3col3"]])[1]),
+#                 height=((plot.sizes[["row3col3"]])[2]),
+#                 units="px",bg="white")
+# #}
+#
+# treff.by.ncatXncontXmethod.plot=
+#   ggplot2::ggplot(data=sim2.plotdata.noadd.noconf,
+#                   ggplot2::aes(y=ITT,group=MethodLab,x=MethodLab,color=MethodLab))+
+#   ggplot2::geom_boxplot(outlier.shape = NA)+
+#   ggplot2::labs(x="Algorithm",y="Treatment Effect",color="Algorithm")+
+#   ggplot2::theme_bw(base_size=sim2.base.size)+
+#   ggplot2::theme(axis.text.x=ggplot2::element_text(angle=35,vjust=1.05,hjust=0.95),
+#                  legend.position = "none")+
+#   #ggplot2::scale_y_continuous(limits = ylim.v.nonoise)+
+#   #ggplot2::scale_x_discrete(labels=c("MV Histogram","Hybrid","DP Mo"))+
+#   ggplot2::scale_color_brewer(palette="Dark2")+
+#   ggplot2::facet_grid(NCatlab~NContlab)
+# treff.by.ncatXncontXmethod.plot
+#
+# #if(save.plot.png==T){
+# ggplot2::ggsave(filename=paste0(plot.fname.pref,"nonoise_sim2_treff_MethodsX_GridMod.png"),
+#                 width=((plot.sizes[["row3col3"]])[1]),
+#                 height=((plot.sizes[["row3col3"]])[2]),
+#                 units="px",bg="white")
+# #}
+# plot.idx=plot.idx+1
+# sim2.plot.list=c(sim2.plot.list,list("NoNoise CI Overlap by Number of Variables and Methods"=cioverlap.by.ncatXncontXmethod.plot,
+#                                      "NoNoise TreatEffect by Number of Variables and Methods Without Outliers"=treff.by.ncatXncontXmethod.plot))
+#
+# save(sim2.plot.list,
+#      sim2.plotdata.noadd.noconf,sim2.plotdata,only.conf,
+#      not.conf,min.y,max.y,
+#      sim2table,sim2.base.size,
+#      file=paste0(outputpath,"/simulations/sim2_tables_and_figures_nonoise",file.suffix,".Rda"))
+
+
+# #### On this version, something went wrong with the diagonostic plot save, so I re-generated them
+# source(paste0(basepath,"/program/functions/reg_assumptions_function.R"))
+# #load(paste0(basepath,"/output/simulations/checkpoint_",sim2.conf.suffix,"_",file.suffix,".Rda"))
+# conf.plot=list("pt.sz1"=4,"ln.sz1"=2.5,"bs.sz1"=33,
+#                "pt.sz2"=2,"ln.sz2"=1,"bs.sz2"=14,
+#                "ncol1"=3,"ncol2"=2,
+#                "width1"=3500,"height1"=2000,
+#                "width2"=1000,"height2"=300)
+# mod.names=names(reg.formulas.sim2)
+# add.plots=lapply(seq(1+length(reg.formulas.sim2)-2,length(reg.formulas.sim2)),
+#                  function(idx)reg_assumptions(reg.formulas.sim2[idx],
+#                                               data=sim.dfs,
+#                                               response.var="y",
+#                                               pt.sz=conf.plot$pt.sz2,
+#                                               ln.sz=conf.plot$ln.sz2,
+#                                               bs.sz=conf.plot$bs.sz2,
+#                                               mod.name=mod.names[idx]))
+# save.plot.name.xtra=paste0(basepath,"/output/figures/diagnostic_",sim2.conf.suffix,"_",file.suffix,"_xtra.png")
+# png(filename=save.plot.name.xtra
+#     ,width=conf.plot$width2,height=conf.plot$height2)
+# print(cowplot::plot_grid(plotlist=add.plots,ncol=conf.plot$ncol2))
+# dev.off()
+#
+# conf.plots=lapply(seq(1,length(reg.formulas.sim2)-2),
+#                  function(idx)reg_assumptions(reg.formulas.sim2[idx],
+#                                               data=sim.dfs,
+#                                               response.var="y",
+#                                               pt.sz=conf.plot$pt.sz1,
+#                                               ln.sz=conf.plot$ln.sz1,
+#                                               bs.sz=conf.plot$bs.sz1,
+#                                               mod.name=mod.names[idx]))
+#
+# save.plot.name=paste0(basepath,"/output/figures/diagnostic_",sim2.conf.suffix,"_",file.suffix,".png")
+# png(filename=save.plot.name
+#     ,width=conf.plot$width1,height=conf.plot$height1)
+# print(cowplot::plot_grid(plotlist=conf.plots,ncol=conf.plot$ncol1))
+# dev.off()
+# #
+# #
+# head(sim1)

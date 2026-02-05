@@ -18,7 +18,9 @@ main_simulation_modelcompare<-function(combos.NCov,nobs,nsims,
                                        n.iters.fulldp,
                                        ci.confidence,stderr.func=NULL,
                                        san.rseed=1,
-                                       se.normal=F, num.cores=1,continuous.vars=NULL,standardize.vars=NULL,continuous.limits=NULL,diagnostic.file=NULL
+                                       #se.normal=F,
+                                       num.cores=1,continuous.vars=NULL,
+                                       save.csv.data.dir=NULL#,standardize.vars=NULL,continuous.limits=NULL,diagnostic.file=NULL
 
 ){
   main.start=proc.time()
@@ -53,33 +55,38 @@ main_simulation_modelcompare<-function(combos.NCov,nobs,nsims,
   }else{
     cont.vars.all=continuous.vars
   }
-
-  if(is.null(standardize.vars)==TRUE){
-    std.vars.all=c(paste0("x",seq(1,ncont)))
-  }else{
-    std.vars.all=standardize.vars
+  if(is.null(save.csv.data.dir)==F){
+    write.csv(sim.dfs,file=paste0(save.csv.data.dir,"/generated_",conf.suffix,"_",file.suffix,".csv"))
   }
-  if(response%in%std.vars.all){
-    sim.dfs[,response]=(sim.dfs[,response]-stats::mean(sim.dfs[,response],na.rm=T))/(base::sqrt(stats::var(sim.dfs[,response],na.rm=T)))
-    std.vars.all=std.vars.all[std.vars.all!=response]
-  }
+    #print(colnames(sim.dfs))
+  #print(cont.vars.all1)
 
-  if(is.null(names(continuous.limits))==TRUE){
-  names(continuous.limits)=continuous.vars
-  }
-  continuous.limits=continuous.limits[continuous.vars]
+  # if(is.null(standardize.vars)==TRUE){
+  #   std.vars.all=c(paste0("x",seq(1,ncont)))
+  # }else{
+  #   std.vars.all=standardize.vars
+  # }
+  # if(response%in%std.vars.all){
+  #   sim.dfs[,response]=(sim.dfs[,response]-stats::mean(sim.dfs[,response],na.rm=T))/(base::sqrt(stats::var(sim.dfs[,response],na.rm=T)))
+  #   std.vars.all=std.vars.all[std.vars.all!=response]
+  # }
+  #
+  # if(is.null(names(continuous.limits))==TRUE){
+  # names(continuous.limits)=continuous.vars
+  # }
+  # continuous.limits=continuous.limits[continuous.vars]
 
 
-  if(is.null(diagnostic.file)==FALSE){
-    out.text=sapply(seq(1,length(continuous.limits)),
-                    function(i)paste0(names(continuous.limits)[i],
-                                      ": Limits=(",paste0(continuous.limits[[i]],collapse=","),
-                                      ") have true range=(",round(min(sim.dfs[,names(continuous.limits)[i]]),3),
-                                      ", ",round(max(sim.dfs[,names(continuous.limits)[i]]),3)))
-    CON=file(diagnostic.file,"a")
-    writeLines(out.text,CON)
-    close(CON)
-  }
+  # if(is.null(diagnostic.file)==FALSE){
+  #   out.text=sapply(seq(1,length(continuous.limits)),
+  #                   function(i)paste0(names(continuous.limits)[i],
+  #                                     ": Limits=(",paste0(continuous.limits[[i]],collapse=","),
+  #                                     ") have true range=(",round(min(sim.dfs[,names(continuous.limits)[i]]),3),
+  #                                     ", ",round(max(sim.dfs[,names(continuous.limits)[i]]),3)))
+  #   CON=file(diagnostic.file,"a")
+  #   writeLines(out.text,CON)
+  #   close(CON)
+  # }
   conf.analysis.start=proc.time()
   times.list=c(times.list,list("Simulate Data"=(conf.analysis.start-gen.sim.start)[[3]]))
 
@@ -118,7 +125,7 @@ main_simulation_modelcompare<-function(combos.NCov,nobs,nsims,
     add.plots=NULL
   }
 
-  print("done with conf data")
+  #print("done with conf data")
   conf.analysis.end=proc.time()
   times.list=c(times.list,list("conf.analysis"=(conf.analysis.end-conf.analysis.start)[[3]]))
   save(conf.plots,add.plots,conf.summaries,sim.dfs,
@@ -147,8 +154,8 @@ main_simulation_modelcompare<-function(combos.NCov,nobs,nsims,
                                                                             sim=paste0("Sim",idx),
                                                                             include.full.model.based=TRUE,
                                                                             true.coef.vals=c(treat.effect),
-                                                                            se.func=stderr.func,
-                                                                            se.normal=se.normal,continuous.limits=continuous.limits,standardize.col=std.vars.all))
+                                                                            se.func=stderr.func))#,
+                                                                            #se.normal=se.normal,continuous.limits=continuous.limits,standardize.col=std.vars.all))
 
   if(dpmodel.higher.budget==TRUE){
     print("in higher.budget==TRUE")
@@ -175,8 +182,8 @@ main_simulation_modelcompare<-function(combos.NCov,nobs,nsims,
                                                                                        include.full.model.based=TRUE,
                                                                                        only.full.model.based=TRUE,
                                                                                        true.coef.vals=c(treat.effect),
-                                                                                       se.func=stderr.func,
-                                                                                       se.normal=se.normal,continuous.limits=continuous.limits,standardize.col=std.vars.all))
+                                                                                       se.func=stderr.func))#,
+                                                                                       #se.normal=se.normal,continuous.limits=continuous.limits,standardize.col=std.vars.all))
 
   }
 

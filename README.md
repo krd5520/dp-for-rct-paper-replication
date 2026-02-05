@@ -95,7 +95,7 @@ The required R packages can be installed by running `global-libraries.R`.
 There are several packages that will be installed from the CRAN. Additionally, a package from GitHub (repository `krd5520/DPrct`) is used for the proposed mechanisms. It will be installed using the following R code: 
 
 ``` R
-remotes::install_github("krd5520/DPrct@2479df9fafbc622b7c270e9910f688df0ca77a6f") #https://github.com/krd5520/DPrct
+remotes::install_github("krd5520/DPrct@2479df9fafbc622b7c270e9910f688df0ca77a6f") 
 
 ```
 
@@ -124,10 +124,6 @@ Optional portions of the code use bash scripting, which may require Linux.
 
 ### Controlled Randomness
 
-> INSTRUCTIONS: Some estimation code uses random numbers, almost always provided by pseudorandom number generators (PRNGs). For reproducibility purposes, these should be provided with a deterministic seed, so that the sequence of numbers provided is the same for the original author and any replicators. While this is not always possible, it is a requirement by many journals' policies. The seed should be set once, and not use a time-stamp. If using parallel processing, special care needs to be taken. If using multiple programs in sequence, care must be taken on how to call these programs, ideally from a main program, so that the sequence is not altered. 
-> INSTRUCTIONS: If no PRNG is used, check the appropriate box.
-> INSTRUCTIONS: If despite attempts to control for randomness, the results are not fully reproducible, please provide a detailed explanation of why, and ideally what kind of instability in numbers a replicator should expect. 
-
 - [X] Random seed is set within each .R file in `programs/` directory
 - [ ] The analysis relies on random number generation, but setting a seed is not possible
 - [ ] No Pseudo random generator is used in the analysis described here.
@@ -137,7 +133,7 @@ Optional portions of the code use bash scripting, which may require Linux.
 
 #### Summary time to reproduce
 
-Approximate time needed to reproduce the analyses on a standard (CURRENT YEAR) desktop machine:
+Approximate time needed to reproduce the analyses on a standard 2026 laptop machine:
 
 - [ ] <10 minutes
 - [ ] 10-60 minutes
@@ -229,19 +225,28 @@ chmod +x liberia_preprocess_run.sh
 The provided code reproduces:
 
 - [X] All numbers provided in text in the paper
-- [X] All tables and figures in the paper
-- [ ] Selected tables and figures in the paper, as explained and justified below.
+- [] All tables and figures in the paper
+- [X] Selected tables and figures in the paper, as explained and justified below.
 
+In `user_defined_variables.R`, you can set your own file suffixes. When listing the files in the table below, we use the placeholder 'v1'.
 
-| Figure/Table #    | Program                  | Line Number | Output file                      | Note                            |
-|-------------------|--------------------------|-------------|----------------------------------|---------------------------------|
-| Table 1           | 02_analysis/table1.do    |             | summarystats.csv                 ||
-| Table 2           | 02_analysis/table2and3.do| 15          | table2.csv                       ||
-| Table 3           | 02_analysis/table2and3.do| 145         | table3.csv                       ||
-| Figure 1          | n.a. (no data)           |             |                                  | Source: Herodus (2011)          |
-| Figure 2          | 02_analysis/fig2.do      |             | figure2.png                      ||
-| Figure 3          | 02_analysis/fig3.do      |             | figure-robustness.png            | Requires confidential data      |
-
+| Figure/Table #    | Program                        | Line Number | Output file                        | Note                             |
+|-------------------|--------------------------------|-------------|------------------------------------|----------------------------------|
+| Figure 1          | n.a. (no data)                 |             |                                    | created on flow.io               |
+| Figure 2          | n.a. (no data)                 |             |                                    | created on flow.io               |
+| Table 1           | simulation_tables_and_figures.R| 116         | sim1_budget_wide_v1.tex            |                                  |
+| Figure 3          | simulation_tables_and_figures.R| ???         |                                    |                                  |  
+| Table 2           | n.a. (no data)                 |             |                                    |                                  |  
+| Table 3 & 4       | simulation_tables_and_figures.R| 440         | sim2_models_v1.tex                 | manually split table in 2        |
+| Figure 4          | simulation_tables_and_figures.R|             | simplots_v1/sim2_cioverlap_hist.png|                                  |
+| Figure 5          | simulation_tables_and_figures.R| ??          | simplots_v1/                       |                                  |
+| Figure 6          | simulation_tables_and_figures.R| ??          | simplots_v1/                       |                                  |
+|
+|
+|
+| Table 11          | liberia_replicate_original_table2b.R | 196    | liberia_replicate2b.tex       | Appendix        |
+| Figure 10         |               |       | liberia_replicate_diagnosticFitPlots.png | 234      | Appendix   
+| 
 ## References
 
 Webb, Kaitlyn R., Mukherjee, Soumya, Mustafi, Aratrika,  Slavković, Aleksandra, and Vilhuber, Lars. 2026. "Assessing Utility of Differential Privacy for RCTs." https://arxiv.org/html/2309.14581v2

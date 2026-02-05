@@ -12,10 +12,20 @@ main_simulation_budgetcompare<-function(nobs,ncat,ncont,nsims,
                          n.iters.fulldp,
                          ci.confidence,stderr.func=NULL,
                          san.rseed=1,se.normal=F,num.cores=1,
-                         n.std.dev=15,continuous.limits=NULL,
-                         continuous.vars=NULL,standardize.vars=NULL,diagnostic.file=NULL){
+                         #n.std.dev=15,continuous.limits=NULL,
+                         continuous.vars=NULL,
+                         #standardize.vars=NULL,
+                         #diagnostic.file=NULL,
+                         save.csv.data.dir=NULL){
   main.start=proc.time()
-  ntreat=length(treat.effect)
+  # ntreat=length(treat.vars)+1
+  # if("control" %in% treat.vars){
+  #   ntreat=length(treat.vars)+1
+  # }else{
+  #   treat.vars=c(treat.vars,"control")
+    ntreat=length(treat.vars)
+  #}
+
   reg.formulas.sim1=rep(paste0(response,"~",paste0(treat.vars,collapse="+"),"+",
                                paste0("x",seq(1,ncat+ncont),collapse="+")),
                         times=length(synthdata.budget))
@@ -27,6 +37,7 @@ main_simulation_budgetcompare<-function(nobs,ncat,ncont,nsims,
 
   mod.names=names(synthdata.budget)
 
+  print("before mod.coefs")
 
   mod.coefs=sim_coefs(ncat=ncat,ncat.groups=sapply(cat.probs,length),ncont=ncont,
                       cat.coef.start=cat.gseq[1],cat.coef.ratio=cat.gseq[2],
@@ -40,61 +51,66 @@ main_simulation_budgetcompare<-function(nobs,ncat,ncont,nsims,
     cont.vars.all=continuous.vars
   }
 
-  if(is.null(standardize.vars)==TRUE){
-    std.vars.all=c(paste0("x",seq(1,ncont)))
-  }else{
-    std.vars.all=standardize.vars
-
-  }
-
-  if(is.null(continuous.limits)==FALSE){
-    if(is.null(names(continuous.limits))==TRUE){
-      names(continuous.limits)=continuous.vars
-    }else{
-      continuous.limits=continuous.limits[continuous.vars]
-    }
-  }
+  # if(is.null(standardize.vars)==TRUE){
+  #   std.vars.all=c(paste0("x",seq(1,ncont)))
+  # }else{
+  #   std.vars.all=standardize.vars
+  #
+  # }
+  #
+  # if(is.null(continuous.limits)==FALSE){
+  #   if(is.null(names(continuous.limits))==TRUE){
+  #     names(continuous.limits)=continuous.vars
+  #   }else{
+  #     continuous.limits=continuous.limits[continuous.vars]
+  #   }
+  # }
 
 
   gen.sim.start=proc.time()
   times.list=list("SetUp"=(gen.sim.start-main.start)[[3]])
+  print("before generate_simulated_dataset")#bef)
   sim.dfs=generate_simulated_dataset(num.cat=ncat,num.cont=ncont,num.treat=ntreat,nobs=nobs,
                                      mod.coefs=mod.coefs,residual.sd=resid.sd,
                                      cat.probs=cat.probs,cont.funcs=cont.funcs,
                                      cont.params=cont.params,
                                      rseed=sim.data.rseed)
+  print(head(sim.dfs))
 
 
 
   sim.dfs=sim.dfs[,!(colnames(sim.dfs)%in%c("treatment","control"))]
-  if(is.null(diagnostic.file)==FALSE){
-    out.text=sapply(seq(1,length(continuous.limits)),
-                    function(i)paste0(names(continuous.limits)[i],
-                                      ": Limits=(",paste0(continuous.limits[[i]],collapse=","),
-                                      ") have true range=(",round(min(sim.dfs[,names(continuous.limits)[i]]),3),
-                                      ", ",round(max(sim.dfs[,names(continuous.limits)[i]]),3)))
-    CON=file(diagnostic.file,"a")
-    writeLines(out.text,CON)
-    close(CON)
-  }
+  # if(is.null(diagnostic.file)==FALSE){
+  #   out.text=sapply(seq(1,length(continuous.limits)),
+  #                   function(i)paste0(names(continuous.limits)[i],
+  #                                     ": Limits=(",paste0(continuous.limits[[i]],collapse=","),
+  #                                     ") have true range=(",round(min(sim.dfs[,names(continuous.limits)[i]]),3),
+  #                                     ", ",round(max(sim.dfs[,names(continuous.limits)[i]]),3)))
+  #   CON=file(diagnostic.file,"a")
+  #   writeLines(out.text,CON)
+  #   close(CON)
+  # }
 
 
 
-  if(response%in%std.vars.all){
-    sim.dfs[,response]=(sim.dfs[,response]-mean(sim.dfs[,response],na.rm=T))/(base::sqrt(stats::var(sim.dfs[,response],na.rm=T)))
-    std.vars.all=std.vars.all[std.vars.all!=response]
-  }
+  # if(response%in%std.vars.all){
+  #   sim.dfs[,response]=(sim.dfs[,response]-mean(sim.dfs[,response],na.rm=T))/(base::sqrt(stats::var(sim.dfs[,response],na.rm=T)))
+  #   std.vars.all=std.vars.all[std.vars.all!=response]
+  # }
 
 
 
   times.list=c(times.list,list("Simulate Data"=(proc.time()-gen.sim.start)[[3]]))
   save(sim.dfs,synthdata.budget,reg.formulas.sim1,model.params,times.list,
-       file=paste0(output.folder,"/simulations/checkpoint_",conf.suffix,"_",file.suffix,".Rda"))
+       file=paste0(output.folder,"/simulations/checkpoints/checkpoint_",conf.suffix,"_",file.suffix,".Rda"))
+  if(is.null(save.csv.data.dir)==F){
+    #print(colnames(sim.dfs))
+    write.csv(sim.dfs,file=paste0(save.csv.data.dir,"/generated_",conf.suffix,"_",file.suffix,".csv"))
+  }
+  print(cat(paste0("in main_simualtion_budget_compare continuous variables are:", paste0(cont.vars.all,collapse=", "))))
 
-  print(cont.vars.all)
-
-  print(head(sim.dfs))
-  print("Simulated Data generated and Confidential Model Fit.")
+  #print(head(sim.dfs))
+  print(cat("Simulated Data generated and Confidential Model Fit."))
   start.simulations=proc.time()
   sim1.out=parallel::mclapply(
       seq(1,nsims),
@@ -119,15 +135,17 @@ main_simulation_budgetcompare<-function(nobs,ncat,ncont,nsims,
                             sim=paste0("Sim",idx),
                             include.full.model.based=TRUE,
                             true.coef.vals=c(treat.effect),
-                            se.func=stderr.func,se.normal=se.normal,
-                            continuous.limits=continuous.limits,standardize.col=std.vars.all,diagnostic.file=diagnostic.file),mc.cores=num.cores)
+                            se.func=stderr.func#,#se.normal=se.normal,
+                            #continuous.limits=continuous.limits,standardize.col=std.vars.all,
+                            #diagnostic.file=diagnostic.file
+                            ),mc.cores=num.cores)
 
   end.simulations=proc.time()
   times.list=c(times.list,list("simulations"=(end.simulations-start.simulations)[[3]]))
 
-  print("sims mclapply finished")
+  #print("sims mclapply finished")
 
-  save(sim1.out,file=paste0(output.folder,"/simulations/checkpoint_budgets_mclapplyfin_",file.suffix,".Rda"))
+  save(sim1.out,file=paste0(output.folder,"/simulations/checkpoint_budgets_",file.suffix,".Rda"))
   #get table of Average Treatment Effect, Average Overlap, Average Absolute Diff, Max Std. Err
   ITT1=dplyr::bind_rows(lapply(sim1.out,"[[",1)) #combine all repetitions
   priv.budget.df=data.frame("Model"=names(synthdata.budget),

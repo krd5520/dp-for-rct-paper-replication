@@ -168,12 +168,10 @@ generate_simulated_dataset<-function(num.cat=0,num.cont=0,num.treat=2,nobs,mod.c
       colnames(cat.mat)=paste0("x",seq(num.cont+1,num.cat+num.cont))
   }
 
-
   sim.data=data.frame(dplyr::bind_cols(treat.mat,cont.mat,cat.mat))
   colnames(sim.data)=c(
                        paste0("t",seq(1,ncol(treat.mat))),
                        paste0("x",seq(1,num.cat+num.cont)))
-
   modMat=stats::model.matrix(formula(paste0("~",paste0(colnames(sim.data),collapse="+"))),
                              data=sim.data)
     #regression matrix form
