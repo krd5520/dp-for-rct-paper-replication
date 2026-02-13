@@ -7,6 +7,7 @@ main.start=proc.time()
 
 #file.suffix="v0321_all_eps2_binssixth_nostandardize"
 file.suffix="v0321_all_eps2_binssixth_allstandardize"
+file.suffix="v02132026"
 outputpath=paste0(basepath,"/output")
 in.datapath=paste0(outputpath,"/liberia/liberia_ITT_compare_methods_data_",file.suffix,".Rda")
 out.datapath=paste0(basepath,"/data")
@@ -37,15 +38,15 @@ load(in.datapath)
 #                                "\\dpmb{10}"="GenM-10")
 
 #change the names of DP model-based method
-change.DPMb.names.tables=list("DP-Mb Same Privacy"="\\dpmb{2}",
-                              "DP-Mb_Eps10_Del0"="\\dpmb{10}",
-                              "DP-Mb_Eps18_Del0"="\\dpmb{18}")
+change.DPMb.names.tables=list("DP-Mb Same Privacy"="\\dpmb{1}",
+                              "DP-Mb_Eps10_Del0"="\\dpmb{1}",
+                              "DP-Mb_Eps18_Del0"="\\dpmb{9}")
 change.method.names.plots=list("Confidential"="Confidential",
                                "MV Histogram"="MV Histogram",
                                "Hybrid"="Hybrid",
-                               "\\dpmb{2}"="GenM-2",
-                               "\\dpmb{10}"="GenM-10", #(3,.375)
-                               "\\dpmb{18}"="GenM-18")
+                               "\\dpmb{1}"="GenM-1",
+                               "\\dpmb{2}"="GenM-2", #(3,.375)
+                               "\\dpmb{9}"="GenM-9")
 adj.out=TRUE #adjust p-values
 
 #liberia_table2b_covset_bymethod paramater

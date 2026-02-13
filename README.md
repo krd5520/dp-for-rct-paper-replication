@@ -98,7 +98,7 @@ There are several packages that will be installed from the CRAN. Additionally, a
 remotes::install_github("krd5520/DPrct@2479df9fafbc622b7c270e9910f688df0ca77a6f") 
 
 ```
-
+The package has been updated since the analysis was preformed for this paper, so the correct SHA must be used.
 
 ### Software Requirements
 
@@ -210,7 +210,7 @@ Similarly for cleaning the Blattman et al. (2025) data and generating basic tabl
 cd dp-for-rct-paper-replication
 
 chmod +x liberia_preprocess_run.sh
-./run_simulations.sh
+./liberia_preprocess_run.sh
 
 ```
 
@@ -229,48 +229,50 @@ The provided code reproduces:
 - [X] Selected tables and figures in the paper, as explained and justified below.
 
 In `user_defined_variables.R`, you can set your own file suffixes. When listing the files in the table below, we use the placeholder 'v1'.
+The folder `simplots_v1/` in found in the `output/figures/` directory.
+The folder `liberia_v1/` is found in the `output/tables` directory
 
-| Figure/Table #    | Program                        | Line Number | Output file                        | Note                             |
-|-------------------|--------------------------------|-------------|------------------------------------|----------------------------------|
-| Figure 1          | n.a. (no data)                 |             |                                    | created on flow.io               |
-| Figure 2          | n.a. (no data)                 |             |                                    | created on flow.io               |
-| Table 1           | simulation_tables_and_figures.R| 116         | sim1_budget_wide_v1.tex            |                                  |
-| Figure 3          | simulation_tables_and_figures.R| ???         |                                    |                                  |  
-| Table 2           | n.a. (no data)                 |             |                                    |                                  |  
-| Table 3 & 4       | simulation_tables_and_figures.R| 440         | sim2_models_v1.tex                 | manually split table into two    |
-| Figure 4          | simulation_tables_and_figures.R|             | simplots_v1/sim2_cioverlap_hist.png|                                  |
-| Figure 5          | simulation_tables_and_figures.R| ??          | simplots_v1/sim2_ModelX_NotDPMb_KeepOutliers.png | first 2 plots      |                     |
-| Figure 5          | simulation_tables_and_figures.R| ??          | simplots_v1/sim2_ModelX_OnlyDPMb_KeepOutliers.png | last 2 plots      |                     |
-| Figure 6          | simulation_tables_and_figures.R| ??          | simplots_v1/sim2_ModelX_GenM1_KeepOutliers.png |                      |                                  |
-| Table 5           | n.a. (no data)                 |             |                                    |                                  |             
-| Table 6           |                                |             |                                    |                                  |
-| Figure 7          |                                |             |                                    |                                  |
-| Figure 8          |                                |             |                                    |                                  |
-| Figure 9          |                                |             |                                    |                                  |
-| Table  7          |                                |             |                                    |                                  |
-| Table 8           |                                |             |                                    |                                  |
-| Table 9           | n.a. (no data)                 |             |                                    | Appendix                                  |             
-| Table 10          | n.a. (no data)                 |             |                                    | Appendix                                 |             
-| Table 11          | liberia_replicate_original_table2b.R | 196    | liberia_replicate2b.tex       | Appendix        |
-| Figure 10         |               |       | liberia_replicate_diagnosticFitPlots.png | 234      | Appendix   
-| Table 12          |               |       |  |     | Appendix  
-| Table 13          |               |       |  |     | Appendix  
-| Table 14          |               |       |  |     | Appendix  
-| Table 15          |               |       |  |     | Appendix  
-| Table 16          |               |       |  |     | Appendix  
-| Table 17          |               |       |  |     | Appendix  
-| Table 18          |               |       |  |     | Appendix  
-| Figure 11         |               |       |  |     | Appendix  
-| Figure 12         |               |       |  |     | Appendix  
-| Figure 13         |               |       |  |     | Appendix  
-| Figure 14         |               |       |  |     | Appendix  
-| Figure 15         |               |       |  |     | Appendix  
-| Figure 16         |               |       |  |     | Appendix  
-| Figure 17         |               |       |  |     | Appendix  
-| Table 19          | n.a. (no data)|       |  |     | Appendix  
-| Figure 18         | simulation_tables_and_figures.R|             | simplots_v1/sim2_treff_ModelX_OnlyDPMb_KeepOutliers.png| Appendix        |
-| Figure 19         | main_simulation_modelcompare.R| 105   | simulations_diagnostic_sim_models_v1.png | Appendix, top 3 plot rows |               | simplots_v1/sim2_cioverlap_hist.png|                                  |      
-| Figure 19 (again) | main_simulation_modelcompare.R| 119   | simulations_diagnostic_sim_models_v1_xtra.png | Appendix, bottom plot row |               | simplots_v1/sim2_cioverlap_hist.png|                                  |      
+| Figure/Table #    | Program                              | Line # | Output file                                       | Note                             |
+|-------------------|--------------------------------------|--------|---------------------------------------------------|----------------------------------|
+| Figure 1          | n.a. (no data)                       |        |                                                   | created on flow.io               |
+| Figure 2          | n.a. (no data)                       |        |                                                   | created on flow.io               |
+| Table 1           | simulation_tables_and_figures.R      | 116    | tables/sim1_budget_wide_v1.tex                    |                                  |
+| Figure 3          | simulation_tables_and_figures.R      | 151    | simplots_v1/sim1_treff_BudgetX_KeepOutliers.png   |                                  |  
+| Table 2           | n.a. (no data)                       |        |                                                   |                                  |  
+| Table 3 & 4       | simulation_tables_and_figures.R      | 440    | tables/sim2_models_v1.tex                         | manually split table into two    |
+| Figure 4          | simulation_tables_and_figures.R      | 763    | simplots_v1/sim2_cioverlap_hist.png               |                                  |
+| Figure 5          | simulation_tables_and_figures.R      | 614    | simplots_v1/sim2_ModelX_NotDPMb_KeepOutliers.png  | first 2 plots                    |
+| Figure 5          | simulation_tables_and_figures.R      | 630    | simplots_v1/sim2_ModelX_OnlyDPMb_KeepOutliers.png | last 2 plots                     |
+| Figure 6          | simulation_tables_and_figures.R      | 603    | simplots_v1/sim2_ModelX_GenM1_KeepOutliers.png    |                                  |   
+| Table 5           | n.a. (no data)                       |        |                                                   |                                  |             
+| Table 6           | liberia_tables.R                     | 151    | liberia_v1/liberia_itt_pval.tex                   |                                  |
+| Figure 7          | liberia_tables.R                     | 214    |                                                |                                  |
+| Figure 8          | liberia_tables.R                     | 227    |                                                   |                                  |
+| Figure 9          | liberia_tables.R                     | 249    |                                                   |                                  |
+| Table  7          | liberia_tables.R                     | 100    |                                                   |                                  |
+| Table 8           | liberia_tables.R                     | 100    |                                                   |                                  |
+| Table 9           | n.a. (no data)                       |        |                                                   | Appendix                         |             
+| Table 10          | n.a. (no data)                       |        |                                                   | Appendix                         |             
+| Table 11          | liberia_replicate_original_table2b.R | 196    | liberia_replicate2b.tex                           | Appendix                         |
+| Figure 10         | liberia_replicate_original_table2b.R | 114    | liberia_replicate_diagnosticFitPlots.png          | Appendix                         |
+| Table 12          | liberia_tables.R                     | 114    | liberia_v1/liberia_allcovsets_allmethods.tex      | Appendix                         |
+| Table 13          | liberia_tables.R                     |        |liberia_v1/liberia_allcovsets_sanitized_MVHist.tex | Appendix                         | 
+| Table 14          | liberia_tables.R                     |        |                                                   | Appendix                         |
+| Table 15          | liberia_tables.R                     |        |                                                   | Appendix                         |  
+| Table 16          | liberia_tables.R                     |        |                                                   | Appendix                         | 
+| Table 17          | liberia_tables.R                     | 127    |                                                   | Appendix                         |  
+| Table 18          | liberia_tables.R                     | 127    |                                                   | Appendix                         |  
+| Figure 11         | liberia_tables.R                     | 239    |                                                   | Appendix                         |  
+| Figure 12         | liberia_tables.R                     | 239    |                                                   | Appendix                         |  
+| Figure 13         | liberia_tables.R                     | 239    |                                                   | Appendix                         |  
+| Figure 14         | liberia_tables.R                     | 239    |                                                   | Appendix                         |  
+| Figure 15         | liberia_tables.R                     | 239    |                                                   | Appendix                         |  
+| Figure 16         | liberia_tables.R                     | 214    |                                                   | Appendix                         |  
+| Figure 17         | liberia_tables.R                     | 227    |                                                   | Appendix                         |  
+| Table 19          | n.a. (no data)                       |        |                                                   | Appendix                         |
+| Figure 18         | simulation_tables_and_figures.R      | 630    |simplots_v1/sim2_treff_ModelX_OnlyDPMb_KeepOutliers.png| Appendix                     |
+| Figure 19         | main_simulation_modelcompare.R       | 105    | simulations_diagnostic_sim_models_v1.png          | Appendix, top 3 plot rows        |       
+| Figure 19 (again) | main_simulation_modelcompare.R       | 119    | simulations_diagnostic_sim_models_v1_xtra.png     | Appendix, bottom plot row        |                                    |      
 
 
 

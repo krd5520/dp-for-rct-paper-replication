@@ -10,8 +10,8 @@ main_liberia_compare_methods<-function(in.datapath,file.suffix,outputpath,out.da
                                        reg.assumption.plots=F,
                                        reg.plot.props=NULL,
                                        override.checkpoints=F,
-                                       n.std.dev=5,continuous.limits=NULL,continuous.vars=NULL,
-                                       standardize.vars=NULL,diagnostic.file=NULL,
+                                       continuous.vars=NULL,
+                                       diagnostic.file=NULL,
                                        which.sets=c("Reduced","Subset","Full"),
                                        var.df=NULL,cat.vars=NULL,response.vars=NULL){
   start.main=proc.time()
@@ -60,7 +60,12 @@ main_liberia_compare_methods<-function(in.datapath,file.suffix,outputpath,out.da
 
 
   ## read in data
-  load(in.datapath)
+  if(grepl(".Rds$", in.datapath,ignore.case = F)){
+    liberia.sub=readRDS(in.datapath)
+  }else{
+    load(in.datapath)
+  }
+
   if(is.null(continuous.vars)==T){
     col.class=attr(liberia.sub,"column.classifications")
     if(is.null(cat.vars)==TRUE){
@@ -75,11 +80,7 @@ main_liberia_compare_methods<-function(in.datapath,file.suffix,outputpath,out.da
     cont.as.cont=continuous.vars
   }
 
-  if(use.allobs==TRUE){
-    liberia.sub=liberia.sub.allobs
-  }else if(use.obs1==TRUE){
-    liberia.sub=liberia.sub.obs1
-  }
+
   liberia.sub[,colnames(liberia.sub)!="treatment"]=apply(liberia.sub[,colnames(liberia.sub)!="treatment"],2,
                                                          function(x)as.numeric(as.character(x)))
   liberia.sub[,block.vars]=apply(liberia.sub[,block.vars],2,
@@ -109,14 +110,14 @@ main_liberia_compare_methods<-function(in.datapath,file.suffix,outputpath,out.da
 
   #liberia.sub[,!(colnames(liberia.sub)%in%c("treatment","control"))]
 
-  if(is.null(continuous.limits)==FALSE){
-    if(is.null(names(continuous.limits))==TRUE){
-      names(continuous.limits)=continuous.vars
-    }else{
-      continuous.limits=continuous.limits[continuous.vars]
-    }
-  }
-  continuous.limits=continuous.limits[cont.as.cont]
+  # if(is.null(continuous.limits)==FALSE){
+  #   if(is.null(names(continuous.limits))==TRUE){
+  #     names(continuous.limits)=continuous.vars
+  #   }else{
+  #     continuous.limits=continuous.limits[continuous.vars]
+  #   }
+  # }
+  # continuous.limits=continuous.limits[cont.as.cont]
 
   print("Starting Covariate Set Comparisons")
 
@@ -152,9 +153,7 @@ main_liberia_compare_methods<-function(in.datapath,file.suffix,outputpath,out.da
                                    reg.plot.path=paste0(outputpath,"/figures/liberia_",file.suffix),
                                    reg.plot.prefix="liberia_diagnostics_full",
                                    reg.plot.props=reg.plot.props,se.normal=T,
-
-                                   nstddev=n.std.dev,cont.limits=continuous.limits,
-                                   std.vars=standardize.vars,diag.file=diagnostic.file,checkpointfname=paste0(outputpath,"/liberia/liberia_checkpoints/full_raw_data_",file.suffix,".Rda"))
+                                   diag.file=diagnostic.file,checkpointfname=paste0(outputpath,"/liberia/liberia_checkpoints/full_raw_data_",file.suffix,".Rda"))
   CON=file(diagnostic.file,"a")
   writeLines(c(" "," ",paste0(rep("#",20),collapse=""),paste0("Full Baseline: ",length(baseline.full)," covariates. Use GenModel? ",use.genmod.full),
                paste("Time Elapsed:",(start.full-proc.time())[[3]]),paste0(rep("#",20),collapse="")),CON)
@@ -200,9 +199,7 @@ main_liberia_compare_methods<-function(in.datapath,file.suffix,outputpath,out.da
                                   reg.plot.path=paste0(outputpath,"/figures/liberia_",file.suffix),
                                   reg.plot.prefix="liberia_diagnostics_subset",
                                   reg.plot.props=reg.plot.props,se.normal=T,
-
-                                  nstddev=n.std.dev,cont.limits=continuous.limits,
-                                  std.vars=standardize.vars,diag.file=diagnostic.file,checkpointfname=paste0(outputpath,"/liberia/liberia_checkpoints/subset_raw_data_",file.suffix,".Rda"))
+                                  diag.file=diagnostic.file,checkpointfname=paste0(outputpath,"/liberia/liberia_checkpoints/subset_raw_data_",file.suffix,".Rda"))
   CON=file(diagnostic.file,"a")
   writeLines(c(" "," ",paste0(rep("#",20),collapse=""),paste0("Subset: ",length(sub.covariates)," covariates."),
                paste("Time Elapsed:",(start.sub-proc.time())[[3]]),paste0(rep("#",20),collapse="")),CON)
@@ -252,8 +249,7 @@ main_liberia_compare_methods<-function(in.datapath,file.suffix,outputpath,out.da
                                   reg.plot.path=paste0(outputpath,"/figures/liberia_",file.suffix),
                                   reg.plot.prefix="liberia_diagnostics_reduced",
                                   reg.plot.props=reg.plot.props,se.normal=T,
-                                  nstddev=n.std.dev,cont.limits=continuous.limits,
-                                  std.vars=standardize.vars,diag.file=diagnostic.file,checkpointfname=paste0(outputpath,"/liberia/liberia_checkpoints/reduced_raw_data_",file.suffix,".Rda"))
+                                  diag.file=diagnostic.file,checkpointfname=paste0(outputpath,"/liberia/liberia_checkpoints/reduced_raw_data_",file.suffix,".Rda"))
   CON=file(diagnostic.file,"a")
   writeLines(c(" "," ",paste0(rep("#",20),collapse=""),paste0("Reduced Subset: ",length(red.sub.covariates)," covariates."),
                paste("Time Elapsed:",(start.red-proc.time())[[3]]),paste0(rep("#",20),collapse="")),CON)

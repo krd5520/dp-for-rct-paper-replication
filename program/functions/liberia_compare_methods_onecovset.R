@@ -17,8 +17,7 @@ liberia_compare_methods_onecovset=function(liberia.sub,
                                  reg.plot.prefix="liberia_diagnostics",
                                  reg.plot.props=NULL,
                                  se.normal=T,
-                                 nstddev=5,cont.limits=NULL,
-                                 std.vars=NULL,diag.file=NULL,use.mvhist=T,checkpointfname="checkpoint.Rda"){
+                                diag.file=NULL,use.mvhist=T,checkpointfname="checkpoint.Rda"){
 
   start.time=proc.time()
   if(is.na(rseed)==FALSE){
@@ -96,9 +95,7 @@ liberia_compare_methods_onecovset=function(liberia.sub,
 
   liberia.sub=liberia.sub[,colnames(liberia.sub)%in%c(treat.vars,block.vars,response.vars.all,covariate.vars)]
 
-  std.vars=colnames(liberia.sub)[colnames(liberia.sub)%in%std.vars]
   cont.as.cont=colnames(liberia.sub)[colnames(liberia.sub)%in%cont.as.cont]
-  cont.limits=cont.limits[colnames(liberia.sub)[colnames(liberia.sub)%in%names(cont.limits)]]
 
   ### Constructing regression model formulas for each response variable
   families=rep("gaussian",length(response.vars.all))
@@ -118,18 +115,14 @@ liberia_compare_methods_onecovset=function(liberia.sub,
   #                 There are ",ncol(liberia.sub[,!(colnames(liberia.sub)%in%c("treatment","control"))])," columns in
   #                 liberia.sub without treatment or control. There are ",length(treat.vars)," treatment variables."))
 
-  if(sum(colnames(liberia.sub)%in%std.vars)==0){
-    std.vars=NULL
-  }else{
-  std.vars=colnames(liberia.sub)[colnames(liberia.sub)%in%std.vars]
-  }
+
   if(sum(colnames(liberia.sub)%in%cont.as.cont)==0){
     cont.as.cont=NULL
-    cont.limits=NULL
+    #cont.limits=NULL
   }else{
   cont.as.cont=colnames(liberia.sub)[colnames(liberia.sub)%in%cont.as.cont]
-  cont.limits=cont.limits[names(cont.limits)%in%cont.as.cont]
-  cont.limits=cont.limits[colnames(liberia.sub)[colnames(liberia.sub)%in%names(cont.limits)]]
+  #cont.limits=cont.limits[names(cont.limits)%in%cont.as.cont]
+  #cont.limits=cont.limits[colnames(liberia.sub)[colnames(liberia.sub)%in%names(cont.limits)]]
   }
   #### intialize time keeping ###
   comp.times.perturb.hist=data.frame("SyntheticMethod"=c("MV Histogram","Hybrid","DP-Mb Same Privacy"),
@@ -210,8 +203,7 @@ liberia_compare_methods_onecovset=function(liberia.sub,
                                          within.blocks=FALSE,
                                          blocks=block.vars,
                                          block.sizes=NULL,
-                                         rseed=NA,continuous.limits=cont.limits,
-                                         standardize.cont=std.vars)
+                                         rseed=NA)
 
 
   for(tvar in c("control",treat.vars)){
@@ -229,18 +221,18 @@ liberia_compare_methods_onecovset=function(liberia.sub,
   ################ Hybrid DP epsilon=1 #######################
   all.y.hybrid.start=proc.time()
 
-  if(sum(colnames(covariate.data)%in%std.vars)==0){
-    std.vars=NULL
-  }else{
-    std.vars=colnames(covariate.data)[colnames(covariate.data)%in%std.vars]
-  }
+  #if(sum(colnames(covariate.data)%in%std.vars)==0){
+  #   std.vars=NULL
+  # }else{
+  #   std.vars=colnames(covariate.data)[colnames(covariate.data)%in%std.vars]
+  # }
   if(sum(colnames(covariate.data)%in%cont.as.cont)==0){
     cont.as.cont=NULL
-    cont.limits=NULL
+    #cont.limits=NULL
   }else{
     cont.as.cont=colnames(covariate.data)[colnames(covariate.data)%in%cont.as.cont]
-    cont.limits=cont.limits[names(cont.limits)%in%cont.as.cont]
-    cont.limits=cont.limits[colnames(covariate.data)[colnames(covariate.data)%in%names(cont.limits)]]
+    #cont.limits=cont.limits[names(cont.limits)%in%cont.as.cont]
+    #cont.limits=cont.limits[colnames(covariate.data)[colnames(covariate.data)%in%names(cont.limits)]]
   }
 
   mv.covariates=DPrct::synthdata_perturb_mvhist(data=covariate.data[,!(colnames(covariate.data)%in%c("treatment","control",treat.vars))],
@@ -258,9 +250,7 @@ liberia_compare_methods_onecovset=function(liberia.sub,
                                                 block.sizes=NULL,
                                                 conditions=c(treat.vars,"control"),
                                                 rseed=NA,
-                                                factorial=TRUE,
-                                                continuous.limits=cont.limits,
-                                                standardize.cont=std.vars)
+                                                factorial=TRUE)
   #mv.covariates$treatment=ifelse("control"==1,"control",NA) ###NOTE IF SOMETHING BREAKS IT MIGHT BE THIS CHANGE!
   #print(sum(grepl(paste0("control|treatment|",paste0(treat.vars,collapse="|")),colnames(mv.covariates))))
   #print(head(mv.covariates[,colnames(mv.covariates)%in% c("control",treat.vars,"treatment")]))
@@ -344,9 +334,7 @@ liberia_compare_methods_onecovset=function(liberia.sub,
                                mv.bins, use.continuous.noise,
                                win.y.resvar,win.y.trcoef,
                                bound.sds,bound.means,n.iters,range.alpha,
-                               method.name="DP-Mb Same Privacy",use.se.normal=se.normal,
-                               continuous.limits=cont.limits,
-                               standardize.cont=std.vars){
+                               method.name="DP-Mb Same Privacy",use.se.normal=se.normal){
     synthdata.start=proc.time()
 
 
@@ -389,9 +377,7 @@ liberia_compare_methods_onecovset=function(liberia.sub,
                                                    blocks=block.vars,
                                                    block.sizes=NULL,
                                                    conditions=c(treat.vars,"control"),
-                                                   factorial=TRUE,
-                                                   continuous.limits=continuous.limits,
-                                                   standardize.cont=standardize.cont)
+                                                   factorial=TRUE)
     # for(tr.var in c(treat.vars,"control")){
     #   mv.covariates2[,tr.var]=ifelse(mv.covariates2$treatment==tr.var,1,0)
     # }
@@ -514,8 +500,7 @@ liberia_compare_methods_onecovset=function(liberia.sub,
                                     win.y.resvar=win.y.resvar,win.y.trcoef=win.y.trcoef,
                                     bound.sds=bound.sds,bound.means=bound.means,
                                     n.iters=n.iters,range.alpha=range.alpha,
-                                    method.name="DP-Mb",use.se.normal=se.normal,continuous.limits=cont.limits,
-                                    standardize.cont=std.vars)
+                                    method.name="DP-Mb",use.se.normal=se.normal)
       #print("Done with MV Hist of Full DP before post process")
       all.DP.Mb.df.list=c(all.DP.Mb.df.list,list("DP-Mb Same Privacy"=fulldpout[[1]]))
       all.DP.Mb.comp.times.summary=c(all.DP.Mb.comp.times.summary,fulldpout[[2]])
@@ -545,9 +530,7 @@ liberia_compare_methods_onecovset=function(liberia.sub,
                                     bound.sds=bound.sds,bound.means=bound.means,
                                     n.iters=n.iters,range.alpha=range.alpha,
                                     method.name=name.i,
-                                    use.se.normal = se.normal,
-                                    continuous.limits=cont.limits,
-                                    standardize.cont=std.vars)
+                                    use.se.normal = se.normal)
         print("Extra DP-Mb out before pre processing")
       all.DP.Mb.df.list=c(all.DP.Mb.df.list,list(fulldpout[[1]]))
       DP.MB.df.names=c(DP.MB.df.names,name.i)
@@ -601,10 +584,13 @@ liberia_compare_methods_onecovset=function(liberia.sub,
       }
     }
     df$control=ifelse(df$treatment=="control",1,0)
-    print(paste("treatment column has:",paste(unique(df$treatment),collapse=", "),". There are ",sum(grepl(paste0("control|",paste0(treat.vars,collapse="|")),colnames(df)))," columns of control or treatment levels."))
+    df=dplyr::select(df,-"treatment")
+    #print(paste("treatment column has:",paste(unique(df$treatment),collapse=", "),". There are ",sum(grepl(paste0("control|",paste0(treat.vars,collapse="|")),colnames(df)))," columns of control or treatment levels."))
 
-    print(head(df[,colnames(df)%in%c("treatment","control",treat.vars)]))
+    #print(head(df[,colnames(df)%in%c("treatment","control",treat.vars)]))
+
     df[,block.vars]=lapply(df[,block.vars],as.factor)
+    print(sapply(colnames(df),function(x)length(unique(df[,x]))))
     data.list=c(data.list,list(df))
   }
   names(data.list)=listname

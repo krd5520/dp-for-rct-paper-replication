@@ -132,6 +132,9 @@ which_variables=function(stata_data_path,subset_data_path, quietly=F){
     liberia.sub$treatment[liberia.sub$tpcashass==1]="tpcashass"
     liberia.sub$treatment[liberia.sub$control==1]="control"
 
+
+
+
     if(quietly==FALSE){
                 cat(paste0("\nSaving subsetted data to ",subset_data_path))
   }
