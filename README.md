@@ -237,16 +237,45 @@ In `user_defined_variables.R`, you can set your own file suffixes. When listing 
 | Table 1           | simulation_tables_and_figures.R| 116         | sim1_budget_wide_v1.tex            |                                  |
 | Figure 3          | simulation_tables_and_figures.R| ???         |                                    |                                  |  
 | Table 2           | n.a. (no data)                 |             |                                    |                                  |  
-| Table 3 & 4       | simulation_tables_and_figures.R| 440         | sim2_models_v1.tex                 | manually split table in 2        |
+| Table 3 & 4       | simulation_tables_and_figures.R| 440         | sim2_models_v1.tex                 | manually split table into two    |
 | Figure 4          | simulation_tables_and_figures.R|             | simplots_v1/sim2_cioverlap_hist.png|                                  |
-| Figure 5          | simulation_tables_and_figures.R| ??          | simplots_v1/                       |                                  |
-| Figure 6          | simulation_tables_and_figures.R| ??          | simplots_v1/                       |                                  |
-|
-|
-|
+| Figure 5          | simulation_tables_and_figures.R| ??          | simplots_v1/sim2_ModelX_NotDPMb_KeepOutliers.png | first 2 plots      |                     |
+| Figure 5          | simulation_tables_and_figures.R| ??          | simplots_v1/sim2_ModelX_OnlyDPMb_KeepOutliers.png | last 2 plots      |                     |
+| Figure 6          | simulation_tables_and_figures.R| ??          | simplots_v1/sim2_ModelX_GenM1_KeepOutliers.png |                      |                                  |
+| Table 5           | n.a. (no data)                 |             |                                    |                                  |             
+| Table 6           |                                |             |                                    |                                  |
+| Figure 7          |                                |             |                                    |                                  |
+| Figure 8          |                                |             |                                    |                                  |
+| Figure 9          |                                |             |                                    |                                  |
+| Table  7          |                                |             |                                    |                                  |
+| Table 8           |                                |             |                                    |                                  |
+| Table 9           | n.a. (no data)                 |             |                                    | Appendix                                  |             
+| Table 10          | n.a. (no data)                 |             |                                    | Appendix                                 |             
 | Table 11          | liberia_replicate_original_table2b.R | 196    | liberia_replicate2b.tex       | Appendix        |
 | Figure 10         |               |       | liberia_replicate_diagnosticFitPlots.png | 234      | Appendix   
-| 
+| Table 12          |               |       |  |     | Appendix  
+| Table 13          |               |       |  |     | Appendix  
+| Table 14          |               |       |  |     | Appendix  
+| Table 15          |               |       |  |     | Appendix  
+| Table 16          |               |       |  |     | Appendix  
+| Table 17          |               |       |  |     | Appendix  
+| Table 18          |               |       |  |     | Appendix  
+| Figure 11         |               |       |  |     | Appendix  
+| Figure 12         |               |       |  |     | Appendix  
+| Figure 13         |               |       |  |     | Appendix  
+| Figure 14         |               |       |  |     | Appendix  
+| Figure 15         |               |       |  |     | Appendix  
+| Figure 16         |               |       |  |     | Appendix  
+| Figure 17         |               |       |  |     | Appendix  
+| Table 19          | n.a. (no data)|       |  |     | Appendix  
+| Figure 18         | simulation_tables_and_figures.R|             | simplots_v1/sim2_treff_ModelX_OnlyDPMb_KeepOutliers.png| Appendix        |
+| Figure 19         | main_simulation_modelcompare.R| 105   | simulations_diagnostic_sim_models_v1.png | Appendix, top 3 plot rows |               | simplots_v1/sim2_cioverlap_hist.png|                                  |      
+| Figure 19 (again) | main_simulation_modelcompare.R| 119   | simulations_diagnostic_sim_models_v1_xtra.png | Appendix, bottom plot row |               | simplots_v1/sim2_cioverlap_hist.png|                                  |      
+
+
+
+
+
 ## References
 
 Webb, Kaitlyn R., Mukherjee, Soumya, Mustafi, Aratrika,  Slavković, Aleksandra, and Vilhuber, Lars. 2026. "Assessing Utility of Differential Privacy for RCTs." https://arxiv.org/html/2309.14581v2
