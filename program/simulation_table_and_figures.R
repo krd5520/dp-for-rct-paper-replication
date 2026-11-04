@@ -144,7 +144,25 @@ plotdata.itt=ITT1%>%filter(Treatment!="control")%>%
   filter(grepl("Pure",Model))
 plotdata.itt$Method=factor(plotdata.itt$Method,
                            levels=c("Confidential","MV Histogram","Hybrid","DP Model-based"),
-                           labels=c("Confidential","MV Histogram","Hybrid",longDPMb))
+                           labels=c("Confidential","MV Histogram","Hybrid","GenModel"))
+
+plotdata.itt.save<-ITT1%>%
+  filter(Treatment!="control")%>%
+  #filter(grepl("Pure",Model))%>%
+  mutate(true_treff=5,
+         "rep"=as.numeric(substring(Sim, first=4,last=NULL)))
+
+plotdata.itt.save$Method=factor(plotdata.itt.save$Method,
+                           levels=c("Confidential","MV Histogram","Hybrid","DP Model-based"),
+                           labels=c("Confidential","MV Histogram","Hybrid","GenModel"))
+plotdata.itt.savev2<-plotdata.itt.save%>%
+  rename(method=Method,epsilon=Epsilon,treff=ITT)%>%
+  tidyr::pivot_wider(names_from=method, values_from=treff)%>%
+  tidyr::pivot_longer(cols=c(`MV Histogram`,`Hybrid`,`GenModel`),names_to="method",values_to="treff")%>%
+  rename(conf_treff=Confidential)
+write.csv(plotdata.itt.savev2, file="output/sim1_privbudget.csv")
+
+head(plotdata.itt.savev2)
 dta.nrow=nrow(plotdata.itt)
 min.x=floor(min(plotdata.itt$Epsilon)-0.5)
 max.x=ceiling(max(plotdata.itt$Epsilon)+0.5)
@@ -484,6 +502,32 @@ sim2.select.cond1=((ITT2$Method!="Confidential")|
                 ((ITT2$Method=="Confidential")&(!grepl("Higher",ITT2$Model))))
 ITT2.dedup=ITT2[sim2.select.cond1,]
 ITT2.dedup$MethodLab=ITT2.dedup$Method
+plotdata.itt.save<-ITT2.dedup%>%
+  filter(Treatment!="control")%>%
+  #filter(grepl("Pure",Model))%>%
+  mutate(true_treff=5,
+         "rep"=as.numeric(substring(Sim, first=4,last=NULL)),
+         "method"=Method)#%>%
+  #rename(model=ModelLab, n_cont=NCont, n_bin=NCat, method=MethodLab,treff=ITT, ci_overlap=CI.overlap)
+plotdata.itt.save$method[grepl("Higher",plotdata.itt.save$Model)]="GenM-2"
+plotdata.itt.save$method[(!grepl("Higher",plotdata.itt.save$Model))&(plotdata.itt.save$Method=="DP Model-based")]="GenM-1"
+table(plotdata.itt.save$method)
+plotdata.itt.save$method=factor(plotdata.itt.save$method,
+                            levels=c("Confidential","MV Histogram","Hybrid",
+                                     "GenM-1","GenM-2"),
+                            labels=c("Confidential","MV Histogram","Hybrid","GenM-1","GenM-2"))
+plotdata.itt.save$model=gsub("HigherBudget_","",plotdata.itt.save$Model)
+plotdata.itt.save$model=factor(plotdata.itt.save$model,levels=c(paste("Model",seq(1,9)),"Unbounded","Finite Set"))
+
+plotdata.itt.savev2<-plotdata.itt.save%>%
+  rename(n_cont=NCont, n_bin=NCat, treff=ITT, ci_overlap=CI.overlap)%>%
+  tidyr::pivot_wider(names_from=method, values_from=treff)%>%
+  tidyr::pivot_longer(cols=c(`MV Histogram`,`Hybrid`,`GenM-1`,`GenM-2`),names_to="method",values_to="treff")%>%
+  rename(conf_treff=Confidential)
+
+
+
+
 ITT2.dedup$MethodLab[grepl("Higher",ITT2.dedup$Model)]="DP-Mb (2)"
 ITT2.dedup$MethodLab[(!grepl("Higher",ITT2.dedup$Model))&(ITT2.dedup$Method=="DP Model-based")]="DP-Mb (1)"
 ITT2.dedup$MethodLab=factor(ITT2.dedup$MethodLab,
@@ -492,6 +536,12 @@ ITT2.dedup$MethodLab=factor(ITT2.dedup$MethodLab,
                             labels=c("Confidential","MV Histogram","Hybrid",unname(DPMbplot.name)))
 ITT2.dedup$ModelLab=gsub("HigherBudget_","",ITT2.dedup$Model)
 ITT2.dedup$ModelLab=factor(ITT2.dedup$ModelLab,levels=c(paste("Model",seq(1,9)),"Unbounded","Finite Set"))
+
+table(plotdata.itt.savev2$model)
+summary(plotdata.itt.savev2)
+write.csv(plotdata.itt.savev2, file="output/sim2_models.csv")
+
+
 
 sim2.plotdata=ITT2.dedup%>%
   filter(Treatment!="control")#%>%filter(Method!="Confidential")
